@@ -1,0 +1,15 @@
+<xml>
+<view title="Items Subcategory" formwidth="800" formheight="600" />
+<sql>
+SELECT A.Id, A.Name, C.Name Category
+FROM ItemSubcategory A, ItemCategory C
+        WHERE A.CategoryId = C.Id
+</sql>
+
+<columns>
+	<column field="Id" type="integer" hidden="true" />
+	<column field="Name" type="string" width="150" />
+        <column field="Category" type="string" width="150" />
+</columns>
+
+</xml>

@@ -1,0 +1,68 @@
+<xml>
+<title>904 Purchase Campaign Buying Info</title>
+
+<select>
+    SELECT * FROM Reporting.TempPurchaseBuying[USERID]
+</select>
+
+<fields>
+	<field name="CampaignId" type="string" width="100" />
+	<field name="InSeason" type="string" width="100" />
+	<field name="CampaignName" caption="Campaign Name" type="string" width="100" />
+	<field name="Brand" type="string" width="100" />
+	<field name="CampDateStart" type="string" width="100" />
+	<field name="CampDateStop" type="string" width="100" />
+	<field name="CampaignType" type="string" width="100" />
+	<field name="Gender" type="string" width="100" />
+	<field name="NoRefsMan" type="string" width="100" />
+	<field name="NoRefsWoman" type="string" width="100" />
+	<field name="NoRefsUnisex" type="string" width="100" />
+	<field name="NoRefsMan" type="string" width="100" />
+	<field name="TotalQuantity" type="string" width="100" />
+	<field name="SupplierValue" type="string" width="100" />
+	<field name="SellOutValue" type="string" width="100" />
+</fields>
+
+<params>
+	<param control="lookup" type="number" caption="CampaignId" name="CampaignId" lookupmodel="catalog/item_campaign" lookuptable="SaleCampaign" lookupvalue="CampaignId" lookupkey="CampaignId" />
+</params>
+
+<initsql>
+
+DROP TABLE IF EXISTS Reporting.TempPurchaseBuyingReport[USERID];
+DROP TABLE IF EXISTS Reporting.TempPurchaseBuying[USERID];
+
+CREATE TABLE Reporting.TempPurchaseBuyingReport[USERID]
+select SC.CampaignId, SC.InSeason, BOL.ItemId, SUM(BOL.Quantity - IF(IBQ.HasSample = 1, 1, 0)) Quantity, IBQ.SellPriceTot, IBQ.SellPriceNet, IBQ.WSP, IBQ.WSPCurrency, IBQ.MasterId,
+	(SELECT rate FROM Currency.exchange_rate WHERE Cur1 = IBQ.WSPCurrency AND CUR2 = 'EUR' ORDER BY ratedate DESC LIMIT 1) ratewsp,
+	(SELECT rate FROM Currency.exchange_rate WHERE Cur1 = 'RON' AND CUR2 = 'EUR' ORDER BY ratedate DESC LIMIT 1) rate
+FROM SaleCampaign SC 
+LEFT JOIN BuyOrder BO ON BO.CampaignId = SC.CampaignId
+LEFT JOIN BuyOrderLine BOL ON BOL.ParentId = BO.Id
+LEFT JOIN ItemBuyQuote IBQ ON IBQ.CampaignId = SC.Id AND IBQ.ItemId = BOL.ItemId
+WHERE SC.StockType = 'Purchase'
+	AND SC.CampDateStart BETWEEN [FROM] AND [TO]
+	[PARAM] AND SC.CampaignId = [CampaignId]
+GROUP BY SC.CampaignId, BOL.ItemId;
+
+ALTER TABLE Reporting.TempPurchaseBuyingReport[USERID] ADD ItemExistingValue DECIMAL(20,2), ADD SellOutValue DECIMAL(20,2);
+
+UPDATE Reporting.TempPurchaseBuyingReport[USERID] SET SellOutValue = Quantity * SellPriceNet * rate;
+UPDATE Reporting.TempPurchaseBuyingReport[USERID] SET ItemExistingValue = Quantity * WSP * ratewsp;
+
+CREATE TABLE Reporting.TempPurchaseBuying[USERID]
+select R.CampaignId, SC.InSeason, SC.Name CampaignName, SC.Brand, SC.CampDateStart, SC.CampDateStop, SC.CampaignType, SC.Gender,
+	(SELECT COUNT(Id) FROM ItemBuyQuote WHERE CampaignId = SC.Id AND ItemGender = 'Man' AND MasterId = 0) NoRefsMan,
+	(SELECT COUNT(Id) FROM ItemBuyQuote WHERE CampaignId = SC.Id AND ItemGender = 'Woman' AND MasterId = 0) NoRefsWoman,
+	(SELECT COUNT(Id) FROM ItemBuyQuote WHERE CampaignId = SC.Id AND ItemGender = 'Unisex' AND MasterId = 0) NoRefsUnisex,
+	SUM(R.Quantity) TotalQuantity, 
+	SUM(R.ItemExistingValue) SupplierValue, 
+	SUM(R.SellOutValue) SellOutValue
+FROM Reporting.TempPurchaseBuyingReport[USERID] R
+INNER JOIN SaleCampaign SC ON SC.CampaignId = R.CampaignId
+GROUP BY R.CampaignId;
+
+</initsql>
+
+
+</xml>

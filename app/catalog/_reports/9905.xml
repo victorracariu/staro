@@ -1,0 +1,326 @@
+<xml>
+<title>905 Leftover Report</title>
+
+<select>
+ 	SELECT * 
+ 	FROM Reporting.TempLeftOverReport[USERID]
+ 	ORDER BY OrderQty DESC
+</select>
+
+<fields>
+	<field name="CampaignId" type="string" width="100" />
+	<field name="ItemId" type="string" width="100" />
+        <field name="Code2" type="string" width="100" />
+        <field name="ItemSize" type="string" width="100" />
+	<field name="Name" type="string" width="100" />
+	<field name="Brand" type="string" width="100" />
+	<field name="WSP" type="string" width="100" />
+	<field name="WSPCurrency" type="string" width="100" />
+	<field name="OrderQty" type="string" width="100" />
+	<field name="InvoicedQty" type="string" width="100" />
+        <field name="RegReturnQty" type="string" width="100" />
+        <field name="B2SQuantity" type="string" width="100" />
+	<field name="StockReceiptQty" type="string" width="100" />
+	<field name="LeftOvers" type="string" width="100" />
+</fields>
+
+<params>
+	<param control="lookup" type="number" caption="CampaignId" name="CampaignId" lookupmodel="catalog/item_campaign" lookuptable="SaleCampaign" lookupvalue="CampaignId" lookupkey="CampaignId" />
+</params>
+
+<initsql>
+
+SELECT @FILTERS := 0;
+
+[PARAM] SELECT IF([CampaignId] != '', 1, @FILTERS) INTO @FILTERS;
+
+CALL Reporting.CheckFilters(@FILTERS);
+CALL Reporting.KillReport(@FILTERS);
+
+DROP TABLE IF EXISTS Reporting.TempLeftOverReport[USERID];
+
+CREATE TABLE Reporting.TempLeftOverReport[USERID]
+select SC.CampaignId, IBQ.ItemId, IBQ.Code2, IBQ.ItemSize, IBQ.Name, IB.Name Brand, IBQ.WSP, IBQ.WSPCurrency
+FROM ItemBuyQuote IBQ
+INNER JOIN ItemBrand IB ON IB.Id = IBQ.BrandId
+INNER JOIN SaleCampaign SC ON SC.Id = IBQ.CampaignId
+WHERE IBQ.TypeId = 1
+[PARAM] AND SC.CampaignId = [CampaignId]
+GROUP BY IBQ.ItemId;
+
+ALTER TABLE Reporting.TempLeftOverReport[USERID] 
+ADD OrderQty INT DEFAULT 0,
+ADD InvoicedQty INT DEFAULT 0,
+ADD RegReturnQty INT DEFAULT 0,
+ADD B2SQuantity INT DEFAULT 0,
+ADD StockReceiptQty INT DEFAULT 0,
+ADD LeftOvers INT DEFAULT 0;
+
+/* Order qty */
+
+UPDATE Reporting.TempLeftOverReport[USERID] R
+INNER JOIN (
+	select SOL.CampaignId, SOL.ItemId, SUM(SOL.Quantity) OrderQty
+	FROM rvx_fdro.SaleOrderLine SOL 
+	WHERE SOL.Quantity > 0
+	[PARAM] AND SOL.CampaignId = [CampaignId]
+	GROUP BY SOL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.OrderQty = IFNULL(R.OrderQty, 0) + IFNULL(t.OrderQty, 0);
+
+UPDATE Reporting.TempLeftOverReport[USERID] R
+INNER JOIN (
+	select SOL.CampaignId, SOL.ItemId, SUM(SOL.Quantity) OrderQty
+	FROM rvx_fdbg.SaleOrderLine SOL 
+	WHERE SOL.Quantity > 0
+	[PARAM] AND SOL.CampaignId = [CampaignId]
+	GROUP BY SOL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.OrderQty = IFNULL(R.OrderQty, 0) + IFNULL(t.OrderQty, 0);
+
+UPDATE Reporting.TempLeftOverReport[USERID] R
+INNER JOIN (
+	select SOL.CampaignId, SOL.ItemId, SUM(SOL.Quantity) OrderQty
+	FROM rvx_fdcz.SaleOrderLine SOL 
+	WHERE SOL.Quantity > 0
+	[PARAM] AND SOL.CampaignId = [CampaignId]
+	GROUP BY SOL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.OrderQty = IFNULL(R.OrderQty, 0) + IFNULL(t.OrderQty, 0);
+
+UPDATE Reporting.TempLeftOverReport[USERID] R
+INNER JOIN (
+	select SOL.CampaignId, SOL.ItemId, SUM(SOL.Quantity) OrderQty
+	FROM rvx_fdhu.SaleOrderLine SOL 
+	WHERE SOL.Quantity > 0
+	[PARAM] AND SOL.CampaignId = [CampaignId]
+	GROUP BY SOL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.OrderQty = IFNULL(R.OrderQty, 0) + IFNULL(t.OrderQty, 0);
+
+UPDATE Reporting.TempLeftOverReport[USERID] R
+INNER JOIN (
+	select SOL.CampaignId, SOL.ItemId, SUM(SOL.Quantity) OrderQty
+	FROM rvx_fdpl.SaleOrderLine SOL 
+	WHERE SOL.Quantity > 0
+	[PARAM] AND SOL.CampaignId = [CampaignId]
+	GROUP BY SOL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.OrderQty = IFNULL(R.OrderQty, 0) + IFNULL(t.OrderQty, 0);
+
+UPDATE Reporting.TempLeftOverReport[USERID] R
+INNER JOIN (
+	select SOL.CampaignId, SOL.ItemId, SUM(SOL.Quantity) OrderQty
+	FROM rvx_fdsi.SaleOrderLine SOL 
+	WHERE SOL.Quantity > 0
+	[PARAM] AND SOL.CampaignId = [CampaignId]
+	GROUP BY SOL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.OrderQty = IFNULL(R.OrderQty, 0) + IFNULL(t.OrderQty, 0);
+
+UPDATE Reporting.TempLeftOverReport[USERID] R
+INNER JOIN (
+	select SOL.CampaignId, SOL.ItemId, SUM(SOL.Quantity) OrderQty
+	FROM rvx_fdsk.SaleOrderLine SOL 
+	WHERE SOL.Quantity > 0
+	[PARAM] AND SOL.CampaignId = [CampaignId]
+	GROUP BY SOL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.OrderQty = IFNULL(R.OrderQty, 0) + IFNULL(t.OrderQty, 0);
+
+
+/* Reg Return Qty */
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) RegReturnQty
+	FROM rvx_fdro.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdro.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Regular Return'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.RegReturnQty = IFNULL(R.RegReturnQty, 0) + t.RegReturnQty;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) RegReturnQty
+	FROM rvx_fdbg.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdbg.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Regular Return'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.RegReturnQty = IFNULL(R.RegReturnQty, 0) + t.RegReturnQty;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) RegReturnQty
+	FROM rvx_fdcz.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdcz.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Regular Return'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.RegReturnQty = IFNULL(R.RegReturnQty, 0) + t.RegReturnQty;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) RegReturnQty
+	FROM rvx_fdhu.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdhu.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Regular Return'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.RegReturnQty = IFNULL(R.RegReturnQty, 0) + t.RegReturnQty;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) RegReturnQty
+	FROM rvx_fdpl.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdpl.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Regular Return'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.RegReturnQty = IFNULL(R.RegReturnQty, 0) + t.RegReturnQty;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) RegReturnQty
+	FROM rvx_fdsi.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdsi.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Regular Return'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.RegReturnQty = IFNULL(R.RegReturnQty, 0) + t.RegReturnQty;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) RegReturnQty
+	FROM rvx_fdsk.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdsk.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Regular Return'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.RegReturnQty = IFNULL(R.RegReturnQty, 0) + t.RegReturnQty;
+
+
+/* Back to Sender Quantity */
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) B2SQuantity
+	FROM rvx_fdro.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdro.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Back To Sender'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.B2SQuantity = IFNULL(R.B2SQuantity, 0) + t.B2SQuantity;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) B2SQuantity
+	FROM rvx_fdbg.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdbg.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Back To Sender'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.B2SQuantity = IFNULL(R.B2SQuantity, 0) + t.B2SQuantity;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) B2SQuantity
+	FROM rvx_fdcz.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdcz.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Back To Sender'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.B2SQuantity = IFNULL(R.B2SQuantity, 0) + t.B2SQuantity;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) B2SQuantity
+	FROM rvx_fdhu.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdhu.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Back To Sender'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.B2SQuantity = IFNULL(R.B2SQuantity, 0) + t.B2SQuantity;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) B2SQuantity
+	FROM rvx_fdpl.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdpl.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Back To Sender'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.B2SQuantity = IFNULL(R.B2SQuantity, 0) + t.B2SQuantity;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) B2SQuantity
+	FROM rvx_fdsi.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdsi.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Back To Sender'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.B2SQuantity = IFNULL(R.B2SQuantity, 0) + t.B2SQuantity;
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) B2SQuantity
+	FROM rvx_fdsk.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdsk.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE SI.CreditNoteType = 'Back To Sender'
+	[PARAM] AND SIL.CampaignId = [CampaignId]
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.B2SQuantity = IFNULL(R.B2SQuantity, 0) + t.B2SQuantity;
+
+
+/* 
+ * Invoiced Quantity. 
+ * Only from ro, because country invoices are first invoiced from ro to FDxx, 
+ * then from FDxx to actual customers 
+ */
+
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SIL.ItemId, SUM(SIL.Quantity) InvoicedQty
+	FROM rvx_fdro.SaleInvoiceLine SIL
+	INNER JOIN rvx_fdro.SaleInvoice SI ON SI.Id = SIL.ParentId
+	WHERE (SI.CreditNoteType is null OR SI.CreditNoteType = '')
+	[PARAM] AND SIL.CampaignId = [CampaignId] 
+	GROUP BY SIL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.InvoicedQty = IFNULL(R.InvoicedQty, 0) + IFNULL(t.InvoicedQty, 0);
+
+
+/* Stock Receipt Quantity */
+UPDATE Reporting.TempLeftOverReport[USERID] R 
+INNER JOIN (
+	SELECT SRL.ItemId, SUM(SRL.Quantity) SRLQuantity
+	FROM StockReceipt SR
+	LEFT JOIN StockReceiptLine SRL ON SRL.ParentId = SR.Id
+	[PARAM] WHERE SR.CampaignId = [CampaignId]
+	GROUP BY SRL.ItemId
+) t ON t.ItemId = R.ItemId
+SET R.StockReceiptQty = IFNULL(R.StockReceiptQty, 0) + t.SRLQuantity;
+
+UPDATE Reporting.TempLeftOverReport[USERID] 
+SET LeftOvers = StockReceiptQty - InvoicedQty;
+
+
+</initsql>
+
+
+</xml>

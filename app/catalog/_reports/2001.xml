@@ -1,0 +1,71 @@
+
+<xml>
+<title> Campaign List</title>
+
+<select>
+	SELECT * FROM Reporting.TempCampaignShipment[USERID]
+</select>
+
+<fields>
+	<field name="CampaignId" type="string" width="100" />
+	<field name="Name" type="string" width="100" />
+	<field name="StartDate" type="date" width="100" />
+	<field name="EndDate" type="date" width="100" />
+	<field name="CampaignStatus" type="string" width="100" />
+	<field name="StockStatus" type="string" width="100" />
+	<field name="DeliveryStatus" type="string" width="100" />
+	<field name="Fulfiller" type="string" width="100" />
+	<field name="Buyer" type="string" width="100" />
+	<field name="ExtraStockQuantity" type="string" width="100" />
+	<field name="ExtraStockStatus" type="string" width="100" />
+	<field name="ExtraStockPayment" type="string" width="100" />
+	<field name="AgreedReturnPercent" type="string" width="100" />
+	<field name="DiscountOnReturnedValue" type="string" width="100" />
+	<field name="OriginalSupplier" type="string" width="100" />
+	<field name="ArrivalDate" type="date" width="100" />
+	<field name="DaysLate" type="integer" width="100" />
+	<field name="ReturnAgreed" caption="Return to supplier" type="string" width="100" />
+	<field name="DaysForReturn" caption="Days for return" type="string" width="100" />
+    <field name="DiscRetValue" caption="Discount on returned value" type="string" width="100" />
+    <field name="PickupDeadline" caption="Shipment pick-up deadline" type="string" width="100" />
+    <field name="CampaignType" caption="Campaign Type" type="string" width="100" />
+    <field name="StockType" caption="Stock Type" type="string" width="100" />
+    <field name="BusinessType" caption="Business Type" type="string" width="100" />
+    <field name="SupplierName" caption="Supplier Name" type="string" width="100" />
+</fields>
+
+<params>
+	<param control="lookup" type="string" name="CampaignId" lookupmodel="catalog/item_campaign" lookuptable="SaleCampaign" lookupkey="CampaignId" />
+	<param control="combo"  type="integer" caption="Shipment Filter" name="CampaignStatusId" comboitems="Y" combovalues="(5,6,7)" />
+    <param control="combo" type="string" name="CampaignType" 
+           comboitems="essentials|mixed|outlet|refurbished|regular|remake|sales|stock|target" 
+           combovalues="essentials|mixed|outlet|refurbished|regular|remake|sales|stock|target" />
+</params>
+
+<initsql>
+    DROP TABLE IF EXISTS Reporting.TempCampaignShipment[USERID];
+    
+    CREATE TABLE Reporting.TempCampaignShipment[USERID] AS
+    SELECT C.CampaignId, C.Name, C.CampDateStart AS StartDate,
+               C.CampDateStop AS EndDate, S.Name AS CampaignStatus, C.CampaignStatus CampaignStatusId,
+               C.StockStatus, C.DeliveryStatus, C.Fulfiller, C.Buyer,
+               C.ExtraStockQuantity, C.ExtraStockStatus, C.ExtraStockPayment,
+               C.DaysForReturn, C.DiscRetValue AS DiscountOnReturnedValue,
+               C.ReturnAgreed AS AgreedReturnPercent, P.Name OriginalSupplier,
+               C.ArrivalDate, C.ReturnAgreed, DATEDIFF(C.ArrivalDate, C.CampDateStart) DaysLate,
+               C.DiscRetValue, C.BusinessType, SP.Name SupplierName,
+               DATE_ADD(
+                    (SELECT MIN(Date) FROM PickupOrder WHERE CampaignId = C.CampaignId),
+                    INTERVAL C.DaysForReturn DAY
+               ) PickupDeadline,
+               C.CampaignType, C.StockType
+	FROM rvx_fdro.SaleCampaignStatus S, rvx_fdro.SaleCampaign C
+            LEFT JOIN rvx_fdro.Partner P ON(C.OriginSupplierId = P.Id)
+            LEFT JOIN rvx_fdro.Partner SP ON(C.SupplierId = SP.Id)
+	WHERE C.CampaignStatus = S.Id
+	[PARAM] AND C.CampaignStatus IN [CampaignStatusId]
+	[PARAM] AND C.CampaignId = [CampaignId]
+	ORDER BY C.Id DESC;
+</initsql>
+
+</xml>

@@ -1,0 +1,9 @@
+<xml>
+<model tablename="ItemCategory" />
+
+<fields>
+	<field name="Id" type="integer"/>
+	<field name="Name" type="string" mandatory="true"/>
+</fields>
+
+</xml>

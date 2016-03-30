@@ -1,0 +1,17 @@
+<xml>
+<form title="Item Category" />
+
+<tabs>
+	<tab id="1" caption="Detail" />
+</tabs>
+
+<boxes>
+	<box id="1" tab="1" caption="Detail" width="450"/>
+</boxes>
+
+<controls>
+	<control box="1" field="Id" type="hidden" />
+        <control box="1" field="Name" type="text" width="300" />
+</controls>
+
+</xml>

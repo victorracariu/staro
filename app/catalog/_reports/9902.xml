@@ -1,0 +1,144 @@
+<xml>
+<title>104 Item Campaign Details</title>
+
+<select>
+
+        SELECT A.Id as ItemId,A.Code, A.Name, A.Code2, A.StockUnit, A.SellPriceNet, A.SellPriceTot, A.PriceRRP * @rate as PriceRRP, A.PriceRRP * @rate * T.ShelfStock as FDV,
+                S.QtyInput-S.QtyOutput AS QtyStock,
+                T.ShelfStock AS ShelfStock,
+             IF(A.WSPCurrency = 'EUR', A.WSP, A.WSP * I.rate ) AS WSP,
+           IF(WSPCurrency = 'EUR', A.WSP, A.WSP * I.rate ) * T.ShelfStock AS StockValue,
+                C.Name Category,
+                G.Name Subcategory,
+                B.Name Brand,
+                M.CampaignId,
+                M.Name CampaignName,
+                A.ItemSize, A.ItemColor, A.ItemGender, T.Shelf,T.ShelfType, T.ShelfOverStock, T.ShelfLocation
+        FROM Reporting.TempStockB[USERID] S, rvx_fdro.Item A
+        LEFT OUTER JOIN Currency.exchange_rate I ON (A.WSPCurrency = I.Cur1 and I.ratedate=@ratedate)
+        LEFT OUTER JOIN rvx_fdro.ItemCategory C ON (A.CategoryId = C.Id)
+        LEFT OUTER JOIN rvx_fdro.ItemSubcategory G ON (A.SubcategoryId = G.Id)
+        LEFT OUTER JOIN rvx_fdro.ItemBrand B ON (A.BrandId = B.Id)
+        LEFT OUTER JOIN rvx_fdro.SaleCampaign M ON (A.CampaignId = M.Id)
+        LEFT OUTER JOIN Reporting.TempStockC[USERID] T ON (A.Id = T.ItemId)
+        WHERE S.ItemId = A.Id
+        AND A.StockKeep = 1
+        ORDER BY C.Name, G.Name, A.Name, A.Code
+        
+</select>
+
+<fields>
+	<group name="Category" type="string" />
+	<field name="Code"  type="string" width="200" caption="SKU"/>
+	<field name="Code2" type="string" width="200" caption="FD Code" />
+	<field name="Name"  type="string" width="300" caption="Item Name" />
+	<field name="QtyStock"  type="money" width="70" caption="Stock Quantity" />
+	<field name="ShelfStock"  type="money" width="70" caption="Shelf Stock" />
+	<field name="WSP" type="money" width="100" caption="WSP (cost price EUR)" />
+    <field name="StockValue"  type="money" width="100" caption="WSV (stock value EUR)" />
+	<field name="PriceRRP"  type="money" width="100" caption="FDP (FDRO RRP EUR)" />
+	<field name="FDV"  type="money" width="100" caption="FDV (sale value EUR)" />
+	<field name="Category"  type="string" width="200" />
+	<field name="Subcategory"  type="string" width="200" />
+	<field name="CampaignId"   type="string" width="100" />
+	<field name="CampaignName" type="string" width="200" />
+	<field name="Brand" type="string" width="200" />
+	<field name="ItemSize" type="string" width="200" />
+	<field name="ItemColor" type="string" width="200" />
+	<field name="ItemGender" type="string" width="200" />
+	<field name="Shelf" type="string" width="200" />
+	<field name="ShelfType" type="string" width="200" />
+	<field name="ShelfOverStock" type="string" width="10" />
+	<field name="ShelfLocation" type="string" width="10" />
+	
+</fields>
+
+<params>
+	<param control="lookup" type="integer" name="A.CategoryId" lookupmodel="catalog/item_category" lookuptable="ItemCategory" />
+	<param control="lookup" type="integer" name="A.SubcategoryId" lookupmodel="catalog/item_subcategory" lookuptable="ItemSubcategory" />	
+	<param control="lookup" type="integer" name="A.BrandId" lookupmodel="catalog/item_brand" lookuptable="ItemBrand" />
+	<param control="lookup" type="integer" name="A.CampaignId" lookupmodel="catalog/item_campaign" lookuptable="SaleCampaign" />
+	<param control="lookup" type="integer" name="S.LocationId" lookupmodel="admin/location" lookuptable="Location" />
+	<param control="text" type="string"   name="A.Code" />
+	<param control="text" type="string"   name="A.Code2" />
+	<param control="text" type="string"   name="A.Name" />	
+</params>
+
+<initsql>
+SET @rate := (SELECT RO from Currency.euro_table having max( ratedate));
+SET @ratedate := (SELECT max(ratedate) from Currency.exchange_rate );
+SELECT @STARTDATE := [FROM];
+
+SELECT @ENDDATE := [TO];
+DROP TABLE IF EXISTS Reporting.TempStockB[USERID];
+DROP TABLE IF EXISTS Reporting.TempStockC[USERID];
+
+
+CREATE TABLE Reporting.TempStockB[USERID](
+ItemId INTEGER, QtyInput NUMERIC(20,4), QtyOutput NUMERIC(20,4));
+
+CREATE TABLE Reporting.TempStockC[USERID](
+ItemId INTEGER,
+ShelfStock NUMERIC(20,4),
+ Shelf VARCHAR(100), 
+ ShelfType VARCHAR(100), 
+ ShelfOverStock VARCHAR(1),
+ ShelfLocation VARCHAR(4) 
+ default "");
+
+
+
+INSERT INTO Reporting.TempStockB[USERID]
+SELECT ItemId, SUM(QtyIn), SUM(QtyOut)
+FROM rvx_fdro.StockOperation
+WHERE LocationId = 2
+GROUP BY ItemId
+having SUM(QtyIn) - SUM(QtyOut) &gt; 0;
+
+
+ALTER TABLE Reporting.TempStockB[USERID] ADD INDEX ItemId(ItemId);
+
+
+
+        INSERT INTO Reporting.TempStockC[USERID] (ItemId,Shelf,ShelfStock, ShelfLocation)
+        SELECT T.ItemId,SS.Shelf, sum(Quantity) as ShelfStock, L.Code
+        FROM Reporting.TempStockB[USERID] T, rvx_fdro.ShelfStock SS, rvx_fdro.ShelfLocation SL LEFT OUTER JOIN Location L ON ( SL.LocationId = L.Id )
+        WHERE T.ItemId = SS.ItemId
+		AND SS.Shelf = SL.Code
+                GROUP BY T.ItemId,SS.Shelf
+                having sum(Quantity) &gt; 0;
+
+                /* No Shelf or there is No Quantity Stored on the shelf */
+                INSERT INTO Reporting.TempStockC[USERID] (ItemId,Shelf,ShelfStock)
+                SELECT ItemId,"No Shelf", QtyStock FROM (
+        SELECT T.ItemId,T.QtyInput-T.QtyOutput as QtyStock, sum(Quantity) as ShelfStock
+        FROM Reporting.TempStockB[USERID] T LEFT JOIN rvx_fdro.ShelfStock SS ON (T.ItemId = SS.ItemId)
+                GROUP BY T.ItemId) B
+                WHERE QtyStock &gt; 0
+                AND (ShelfStock is null OR ShelfStock = 0);
+
+               /* There is less than the the total stock stored on the shelf */
+                INSERT INTO Reporting.TempStockC[USERID] (ItemId,Shelf,ShelfStock)
+                SELECT ItemId,"No Shelf", QtyStock - ShelfStock FROM (
+        SELECT T.ItemId,T.QtyInput-T.QtyOutput as QtyStock, sum(Quantity) as ShelfStock
+        FROM Reporting.TempStockB[USERID] T LEFT JOIN rvx_fdro.ShelfStock SS ON (T.ItemId = SS.ItemId)
+                GROUP BY T.ItemId) B
+                WHERE QtyStock &gt; ShelfStock
+                AND ShelfStock is not null;
+
+ALTER TABLE Reporting.TempStockC[USERID] ADD INDEX ItemId(ItemId);
+
+                /* Shelf Stock exceeds Stock Operation Quantity */
+                UPDATE  Reporting.TempStockC[USERID] TC, (SELECT T.ItemId,T.QtyInput-T.QtyOutput as QtyStock, sum(Quantity) as ShelfStock
+        FROM Reporting.TempStockB[USERID] T LEFT JOIN rvx_fdro.ShelfStock SS ON (T.ItemId = SS.ItemId)
+                GROUP BY T.ItemId ) B
+                SET TC.ShelfOverStock = "*"
+                WHERE B.ShelfStock &gt; B.QtyStock
+                AND B.ItemId = TC.ItemId;
+
+UPDATE Reporting.TempStockC[USERID] SS, rvx_fdro.ShelfLocation SL
+SET SS.ShelfType = SL.Name
+WHERE SS.Shelf = SL.Code;
+
+</initsql>
+</xml>

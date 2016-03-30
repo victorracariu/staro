@@ -1,0 +1,94 @@
+body{
+	font-family:"Myriad Pro","Myriad Web","Tahoma","Helvetica","Arial",sans-serif;
+	font-size:14px;
+	margin:5px 5px 5px 5px;
+	color:#333;
+}
+table{
+	color:#333;
+	width:100%;
+	font-family:"Myriad Pro","Myriad Web","Tahoma","Helvetica","Arial",sans-serif;
+	font-size:12px;
+	padding:2px 2px 2px 2px;
+	border:1px solid lightgray;
+}
+th{
+	color:#c24733;
+	font-size:14px;
+	text-align:left;
+	text-decoration:bold;
+	padding-left:5px;
+	border-bottom:1px solid lightgray;
+}
+a{
+	color:#C64934;
+	text-decoration:none;
+}
+a:hover{
+	color:#30569D;
+	text-decoration:underline;
+}
+a:active{
+	color:#333333;
+	text-decoration:underline;
+}
+
+#cpanel{
+	text-align:center;
+	vertical-align:middle;
+}
+#cpanel div.icon{
+	margin:3px;
+}
+#cpanel div.icon a{
+	display:block; float:left;
+	height:68px !important;
+	width:80px !important;
+	vertical-align:middle;
+	text-decoration:none;
+	border:1px solid #DDD;
+	padding:2px 5px 1px 5px;
+}
+#cpanel div.icon a:link{
+	background:white;
+	color:black;
+	border:1px solid lightgray;
+}
+#cpanel div.icon a:visited{
+	background:white;
+	color:black;
+	border:1px solid lightgray;
+}
+#cpanel div.icon a:hover{
+	color:#333;
+	background-color:#f1e8e6;
+	border:1px solid #c24733;
+	padding:3px 4px 0px 6px;
+}
+#cpanel div.icon a:active{
+	color:#808080;
+}
+#cpanel div.icon a:visited{
+	color:black;
+}
+#cpanel div.icon img{
+	margin-top:3px;
+}
+#cpanel div.icon span{
+	display:block; padding-top:3px;
+}
+
+a.tooltip, a.tooltip:hover{
+	color:black;
+	text-decoration:none;
+	border-bottom:1px dashed #aaa;
+}
+
+a.tooltiplink{
+	display:block;
+	width:100%;
+}
+a.tooltiplink:hover{
+	text-decoration: none;
+}
+

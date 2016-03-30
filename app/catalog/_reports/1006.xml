@@ -1,0 +1,13 @@
+<xml>
+<title>Item Brand List</title>
+
+<select>
+	SELECT Id, Code, Name FROM ItemBrand
+</select>
+
+<fields>
+	<field name="Code" type="string" width="100" />
+	<field name="Name" type="string" width="200" />
+        <field name="Id" type="string" width="200" caption="Id" hidden="true" />
+</fields>
+</xml>

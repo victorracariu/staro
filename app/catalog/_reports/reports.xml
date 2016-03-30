@@ -1,0 +1,31 @@
+<xml>
+
+<folders>
+	<folder id="1" name="Items" />
+	<folder id="2" name="Campaigns" />
+	<folder id="9" name="Special" />
+</folders>
+
+<reports>
+	<report fd="1" id="1001" name="Item List" />
+	<report fd="1" id="1002" name="Item Categories" />
+	<report fd="1" id="1003" name="Item Subcategories" />
+        <report fd="1" id="1004" name="Item Category Types" />
+        <report fd="1" id="1005" name="Item Category Units" />
+        <report fd="1" id="1006" name="Item Brands" />
+
+	<report fd="2" id="2001" name="Campaign List" />
+	<report fd="2" id="2002" name="604 Document Relation Report" />
+	<report fd="2" id="2003" name="Campaign History List" />
+
+	<report fd="9" id="9901" name="Item List Campaign" />
+	<report fd="9" id="9902" name="104 Item Campaign Details" />
+	<report fd="9" id="9903" name="903 Cash Flow Report" />
+
+	<report fd="9" id="9905" name="905 Leftover Report" />
+	<report fd="9" id="9904" name="904 Purchase Campaign Buying Info" />
+
+	<report fd="9" id="9906" name="906 Item Brand Country Restrictions" />
+</reports>
+
+</xml>

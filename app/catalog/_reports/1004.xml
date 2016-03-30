@@ -1,0 +1,21 @@
+<xml>
+<title>Category Types</title>
+
+<select>
+	SELECT ICT.Code, ICT.Name, IC.Name Category
+	FROM ItemCatType ICT, ItemCategory IC
+	WHERE ICT.CategoryId = IC.Id
+	ORDER BY IC.Name, ICT.Name
+</select>
+
+<fields>
+	<field name="Code" type="string" width="100" />
+	<field name="Name" type="string" width="200" />
+	<field name="Category" type="string" width="200" />	
+</fields>
+
+<params>
+	<param control="lookup" type="integer" name="ICT.CategoryId" lookupmodel="catalog/item_category" lookuptable="ItemCategory" caption="Category" />
+</params>
+
+</xml>

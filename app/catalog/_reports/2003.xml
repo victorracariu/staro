@@ -1,0 +1,26 @@
+<xml>
+<title> Campaign History List</title>
+
+<select>
+	SELECT C.CampaignId, C.Name, C.Fulfiller, C.Buyer, H.Type,
+               GROUP_CONCAT(Reporting.fnStripTags(H.Description) SEPARATOR '\n========\n') Description
+	FROM SaleCampaign C, SaleCampaignHistory H
+	WHERE H.ParentId = C.Id
+	AND H.Type != 'Automated Log'
+	GROUP BY C.CampaignId, H.Type
+</select>
+
+<fields>
+	<field name="CampaignId" type="string" width="100" />
+	<field name="Name" type="string" width="100" />
+	<field name="Fulfiller" type="string" width="100" />
+	<field name="Buyer" type="string" width="100" />
+	<field name="Type" type="string" width="100" />
+	<field name="Description" type="string" width="2000"/>
+</fields>
+
+<params>
+	<param control="lookup" type="string" name="C.CampaignId" lookupmodel="catalog/item_campaign" lookuptable="SaleCampaign" lookupkey="CampaignId" lookupname="Name"/>
+	<param control="combo" type="string" name="H.Type" caption="History Type" comboitems="Buyer Info|Payment Alert|Payment Info|Reception Alert|Reception Information|Customer Feedback" combovalues="Buyer Info|Payment Alert|Payment Info|Reception Alert|Reception Information|Customer Feedback"/>
+</params>
+</xml>

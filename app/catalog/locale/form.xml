@@ -1,0 +1,17 @@
+<xml>
+<form title="Locale" />
+
+<tabs>
+	<tab id="1" caption="Detail" columns="2" />
+</tabs>
+
+<boxes>
+	<box id="11" tab="1" caption="Detail" width="450"/>
+</boxes>
+
+<controls>
+	<control box="11" field="Id" type="hidden" />
+        <control box="11" field="Locale" type="text" width="300" />
+</controls>
+
+</xml>

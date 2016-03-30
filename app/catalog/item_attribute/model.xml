@@ -1,0 +1,12 @@
+<xml>
+<model tablename="ItemAttribute" />
+
+<fields>
+	<field name="Id" type="integer"/>
+	<field name="Name" type="string" mandatory="true"/>
+        <field name="SubcategoryId" type="integer" mandatory="true" lookupmodel="catalog/item_subcategory" lookuptable="ItemSubcategory" lookupname="Name" />
+        <field name="IsMandatory" type="integer"/>
+        <field name="IsFilter" type="integer"/>
+</fields>
+
+</xml>

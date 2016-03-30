@@ -1,0 +1,9 @@
+<xml>
+<model tablename="Item" />
+
+<fields>
+	<field name="Id" type="integer"/>
+        
+</fields>
+
+</xml>

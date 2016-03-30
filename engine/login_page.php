@@ -1,0 +1,20 @@
+<?php
+include( "header.php" );
+echo "<script type=\"text/javascript\">\r\nvar baseurl = '";
+echo base_url( );
+echo "';\r\nvar rvxCompanyList  = [ ";
+echo $view->CompanyList;
+echo " ];\r\nvar rvxLanguageList = [ ";
+echo $view->LanguageList;
+echo " ];\r\nvar rvxLastCompany  = '";
+echo $view->Company;
+echo "';\r\nvar rvxLastUsername = '";
+echo $view->Username;
+echo "';\r\nvar rvxLastPassword = '";
+echo $view->Password;
+echo "';\r\nvar rvxLastLanguage = '";
+echo $view->Language;
+echo "';\r\n</script>\r\n";
+echo "<script type=\"text/javascript\" src=\"js/rvx_login.js\"></script>\r\n";
+echo "<s";
+echo "cript type=\"text/javascript\">\r\nExt.onReady(function(){\r\n\tExt.BLANK_IMAGE_URL = 'js/resources/images/default/s.gif';\r\n\tExt.QuickTips.init();\t\r\n\trvxRunLogin();\t\r\n});\r\n</script>\r\n<div id=\"divContainer\" style=\"width: 400px;\">\r\n<div id=\"divForm\"></div>\r\n";

@@ -1,0 +1,12 @@
+<xml>
+<model tablename="ItemValue" />
+
+<fields>
+	<field name="Id" type="integer"/>
+	<field name="Name" type="string" mandatory="true" />
+        <field name="Value" type="string"/>
+        <field name="ItemId" type="integer" mandatory="true" lookupmodel="catalog/item" lookuptable="Item" lookupname="Code" />
+        <field name="AttributeId" type="integer" mandatory="true" lookupmodel="catalog/item_attribute" lookuptable="ItemAttribute" lookupname="Id" />
+</fields>
+
+</xml>

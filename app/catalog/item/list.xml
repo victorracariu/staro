@@ -1,0 +1,31 @@
+<xml>
+<view title="Items List" formwidth="800" formheight="600" />
+<sql>
+SELECT A.Id, A.Code, A.Name, A.EAN, C.Name Category, S.Name Subcategory, B.Name Brand, A.IsValidated, IsContent
+FROM Item A, ItemCategory C, ItemSubcategory S, ItemBrand B
+        WHERE A.CategoryId = C.Id
+        AND A.SubcategoryId = S.Id
+        AND A.BrandId = B.Id
+</sql>
+
+<columns>
+	<column field="Id" type="integer" hidden="true" />
+	<column field="Code" type="string" width="150" upper="1" />
+        <column field="IsContent" type="bool" width="50" caption="Content"/>
+        <column field="IsValidated" type="bool" width="50" caption="Validated"/>
+	<column field="Name" type="string" width="200" />
+        <column field="EAN" type="string" width="200" />
+        <column field="Subcategory" type="string" width="200" />
+        <column field="Brand" type="string" width="200" />
+</columns>
+
+<actions>
+        <action caption="Show All" url="catalog/item" />
+        <action caption="Filter Content" url="catalog/item/index/content/1" />
+        <action caption="-"/>
+	<action caption="Import Excel" url="catalog/item_import_excel" />
+        <action caption="Export Excel" url="catalog/item_export_excel" />
+</actions>
+
+
+</xml>

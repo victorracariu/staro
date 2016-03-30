@@ -1,0 +1,10 @@
+<xml>
+<model tablename="ItemSubcategory" />
+
+<fields>
+	<field name="Id" type="integer"/>
+	<field name="Name" type="string" mandatory="true"/>
+        <field name="CategoryId" type="integer" mandatory="true" lookupmodel="catalog/item_category" lookuptable="ItemCategory" lookupname="name" />
+</fields>
+
+</xml>

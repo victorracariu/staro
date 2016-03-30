@@ -1,0 +1,18 @@
+<xml>
+<view title="Items Category" formwidth="800" formheight="600" />
+<sql>
+SELECT A.Id, A.Name
+FROM ItemCategory A
+</sql>
+
+<columns>
+	<column field="Id" type="integer" hidden="true" />
+	<column field="Name" type="string" width="150" />
+</columns>
+
+<actions>
+	<action caption="Category Import" url="catalog/item_category_import_excel" />
+</actions>
+
+
+</xml>

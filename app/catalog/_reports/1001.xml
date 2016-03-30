@@ -1,0 +1,188 @@
+<xml>
+<title>Item List</title>
+
+<select>
+   SELECT * FROM Reporting.Temp1001Item[USERID]
+</select>
+
+<fields>
+	<field name="ItemId" type="string" width="100" />
+	<field name="MasterId" type="string" width="100" />
+	<field name="Code" type="string" width="100" />
+	<field name="Code2" type="string" width="100" />
+	<field name="Name" type="string" width="200" />
+	<field name="EAN" type="string" width="100" hidden="true" />
+	<field name="Description" type="string" width="100" hidden="true" />
+	<field name="Category" type="string" width="100" hidden="true" />
+	<field name="Subcategory" type="string" width="100" hidden="true" />
+	<field name="TypeName" type="string" width="100" hidden="true" />
+	<field name="Brand" type="string" width="100" hidden="true" />
+	<field name="Color" type="string" width="100" hidden="true" />
+	<field name="Size" type="string" width="100" hidden="true" />
+	<field name="Gender" type="string" width="100" hidden="true" />
+
+        <field name="SellPriceNet" type="money" width="100" />
+	<field name="SellPriceTot" type="money" width="100" />
+	<field name="PriceRRP" type="money" width="100" />
+
+	<field name="PriceBg" type="money" width="100" hidden="true" />
+	<field name="PriceRRPBg" type="money" width="100" hidden="true" />
+
+	<field name="PriceCz" type="money" width="100" hidden="true" />
+	<field name="PriceRRPCz" type="money" width="100" hidden="true" />
+
+	<field name="PriceHu" type="money" width="100" hidden="true" />
+	<field name="PriceRRPHu" type="money" width="100" hidden="true" />
+
+	<field name="PricePl" type="money" width="100" hidden="true" />
+	<field name="PriceRRPPl" type="money" width="100" hidden="true" />
+
+	<field name="PriceSi" type="money" width="100" hidden="true" />
+	<field name="PriceRRPSi" type="money" width="100" hidden="true" />
+
+	<field name="PriceSk" type="money" width="100" hidden="true" />
+	<field name="PriceRRPSk" type="money" width="100" hidden="true" />
+
+	<field name="SellCurrency" type="string" width="100" hidden="true" />
+	<field name="SellPriceNetV" type="money" width="100" hidden="true" />
+	<field name="SellPriceTotV" type="money" width="100" hidden="true" />
+	<field name="CostPriceNet" type="money" width="100" />
+	<field name="Inactive" type="bool" hidden="true" />
+	<field name="ItemType" type="string" hidden="true" />
+	<field name="ItemSizeFormat" type="string" width="50" />
+	<field name="ItemSizeConverted" type="string" width="50" />
+	<field name="ItemSizeConvertedFormat" type="string" width="50" />
+	<field name="ImageFolder" type="string" width="200" />
+	<field name="ItemStatus" type="string" width="50" />
+        <field name="FirstCampaignId" type="string" width="100"  hidden="true"/>
+        <field name="FirstCampaignType" type="string" width="100"  hidden="true"/>
+        <field name="FirstCampaignDateStop" type="string" width="100"  hidden="true"/>
+        <field name="FirstCampaignReturnAgreed" type="string" width="100"  hidden="true"/>
+        <field name="FirstCampaignDaysForReturn" type="string" width="100"  hidden="true"/>
+
+	<field name="LastCampaignId" type="string" width="50"  hidden="true"/>
+	<field name="LastCampaignType" type="string" width="50"  hidden="true"/>
+        <field name="CampaignStatus" type="string" width="50"  hidden="true"/>
+        <field name="MinimumPrice" type="string" width="50"  hidden="true"/>
+        <field name="CampDateStart" type="string" width="50"  hidden="true"/>
+        <field name="CampDateStop" type="string" width="50"  hidden="true"/>
+        <field name="ArchivedPictures" type="string" width="50" />
+</fields>
+
+<params>
+	<param control="lookup" type="integer" name="CategoryId" lookupmodel="catalog/item_category" lookuptable="ItemCategory" lookupvalue="Name" lookupkey="Id"/>
+	<param control="lookup" type="integer" name="SubcategoryId" lookupmodel="catalog/item_subcategory" lookuptable="ItemSubcategory" lookupvalue="Name" lookupkey="Id"/>
+	<param control="lookup" type="integer" name="CatTypeId" lookupmodel="catalog/item_cat_type" lookuptable="ItemCatType" lookupvalue="Name" lookupkey="Id"/>
+	<param control="lookup" type="integer" name="BrandId" lookupmodel="catalog/item_brand" lookuptable="ItemBrand" />
+	<param control="combo" type="integer" name="Inactive" comboitems="Y|N" combovalues="1|0" />
+	<param control="text" type="string"   name="Code" />
+    <param control="text" type="string"   name="Code2" />
+	<param control="lookup" type="number" caption="LastCampaignId" name="LastCampaignId" lookupmodel="catalog/item_campaign" lookuptable="SaleCampaign" lookupvalue="CampaignId" lookupkey="CampaignId" />
+</params>
+
+<initsql>
+
+SELECT @FILTERS := 0;
+
+[PARAM] SELECT IF([CategoryId] != '', 1, @FILTERS) INTO @FILTERS;
+[PARAM] SELECT IF([SubcategoryId] != '', 1, @FILTERS) INTO @FILTERS;
+[PARAM] SELECT IF([CatTypeId] != '', 1, @FILTERS) INTO @FILTERS;
+[PARAM] SELECT IF([BrandId] != '', 1, @FILTERS) INTO @FILTERS;
+[PARAM] SELECT IF([Inactive] != '', 1, @FILTERS) INTO @FILTERS;
+[PARAM] SELECT IF([LastCampaignId] != '', 1, @FILTERS) INTO @FILTERS;
+[PARAM] SELECT IF([Code] != '', 1, @FILTERS) INTO @FILTERS;
+[PARAM] SELECT IF([Code2] != '', 1, @FILTERS) INTO @FILTERS;
+
+CALL Reporting.CheckFilters(@FILTERS);
+CALL Reporting.KillReport(@FILTERS);
+
+DROP TABLE IF EXISTS Reporting.Temp1001Item[USERID];
+CREATE TABLE Reporting.Temp1001Item[USERID](
+ItemId INT,
+MasterId INT,
+Code VARCHAR(50),
+Code2 VARCHAR(50),
+Name VARCHAR(255),
+EAN VARCHAR(255),
+Description TEXT,
+Category VARCHAR(250),
+Subcategory VARCHAR(150),
+TypeName VARCHAR(50),
+Brand VARCHAR(250),
+Color VARCHAR(50),
+Size VARCHAR(50),
+Gender VARCHAR(50),
+SellPriceNet DECIMAL(10,4),
+SellPriceTot DECIMAL(10,4),
+PriceRRP Decimal(10,2),
+PriceBg Decimal(10,2),
+PriceRRPBg Decimal(10,2),
+PriceCz Decimal(10,2),
+PriceRRPCz Decimal(10,2),
+PriceHu Decimal(10,2),
+PriceRRPHu Decimal(10,2),
+PricePl Decimal(10,2),
+PriceRRPPl Decimal(10,2),
+PriceSi Decimal(10,2),
+PriceRRPSi Decimal(10,2),
+PriceSk Decimal(10,2),
+PriceRRPSk Decimal(10,2),
+SellCurrency VARCHAR(5),
+SellPriceNetV DECIMAL(10,4),
+SellPriceTotV DECIMAL(10,4),
+CostPriceNet DECIMAL(10.4),
+Inactive INT,
+ItemType VARCHAR(50),
+ItemSizeFormat VARCHAR(50),
+ItemSizeConverted VARCHAR(50),
+ItemSizeConvertedFormat VARCHAR(50),
+ImageFolder VARCHAR(255),
+ItemStatus VARCHAR(50),
+FirstCampaignId INT,
+FirstCampaignType VARCHAR(50),
+FirstCampaignReturnAgreed VARCHAR(50),
+FirstCampaignDaysForReturn VARCHAR(50),
+LastCampaignId INT,
+LastCampaignType VARCHAR(50),
+CampaignStatus VARCHAR(50),
+MinimumPrice DECIMAL(10,4),
+CampDateStart DATE,
+CampDateStop DATE,
+ArchivedPictures VARCHAR(3)
+);
+INSERT INTO Reporting.Temp1001Item[USERID]
+SELECT A.Id ItemId, A.MasterId, A.Code, A.Code2, A.Name, A.EAN, A.Description, C.Name Category, S.Name Subcategory,
+    T.Name AS TypeName, B.Name Brand, A.ItemColor Color, A.ItemSize AS Size, A.ItemGender AS Gender,
+    A.SellPriceNet, A.SellPriceTot, A.PriceRRP,
+    A.PriceBg, A.PriceRRPBg, A.PriceCz, A.PriceRRPCz, A.PriceHu, A.PriceRRPHu,
+    A.PricePl, A.PriceRRPPl, A.PriceSi, A.PriceRRPSi, A.PriceSk, A.PriceRRPSk,
+    A.SellCurrency, A.SellPriceNetV, A.SellPriceTotV, A.CostPriceNet,
+A.Inactive,  IT.Name ItemType, A.ItemSizeFormat,
+A.ItemSizeConverted, A.ItemSizeConvertedFormat, A.ImageFolder, IF(A.Description is null, 'NEW', 'OLD') ItemStatus,
+SCF.Id FirstCampaignId, SCF.CampaignType FirstCampaignType, SCF.ReturnAgreed FirstCampaignReturnAgreed, SCF.DaysForReturn FirstCampaignDaysForReturn,
+SC.CampaignId LastCampaignId, SC.CampaignType LastCampaignType, SCS.Name CampaignStatus,
+(SELECT IFNULL(MIN(A.SellPriceTot), 0)) MinimumPrice, SC.CampDateStart, SC.CampDateStop, IF(A.Archived = 1, 'Yes', 'No')
+
+FROM ItemCategory C, ItemBrand B, Item A
+LEFT JOIN ItemSubcategory S ON (A.SubcategoryId = S.Id)
+LEFT JOIN ItemCatType T ON (A.CatTypeId = T.Id)
+LEFT JOIN ItemType IT ON (A.TypeId = IT.Id)
+LEFT JOIN SaleCampaign SC ON SC.Id = A.LastCampaignId
+LEFT JOIN SaleCampaign SCF ON SCF.Id = A.CampaignId
+JOIN SaleCampaignStatus SCS ON (SC.CampaignStatus = SCS.Id)
+WHERE A.CategoryId=C.Id
+[PARAM] AND A.CategoryId = [CategoryId]
+[PARAM] AND A.SubcategoryId = [SubcategoryId]
+[PARAM] AND A.CatTypeId = [CatTypeId]
+[PARAM] AND A.BrandId = [BrandId]
+[PARAM] AND A.Inactive = [Inactive]
+[PARAM] AND SC.CampaignId = [LastCampaignId]
+[PARAM] AND A.Code = [Code]
+[PARAM] AND A.Code2 = [Code2]
+AND A.BrandId = B.Id
+GROUP By A.Id
+ORDER BY C.Name, S.Name, A.Code, A.Name;
+
+</initsql>
+
+</xml>

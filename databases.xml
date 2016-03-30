@@ -1,0 +1,3 @@
+<databases>
+	<database name="company" driver="mysql" host="rvxdb-1.staging.ros.fd.corp" database="company" user="rvx" pass="AbadPrGVtSqvtGR6" />
+</databases>

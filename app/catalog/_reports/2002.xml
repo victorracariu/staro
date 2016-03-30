@@ -1,0 +1,379 @@
+<xml>
+<title>604 Document Relation Report</title>
+<orientation>L</orientation>
+
+<select>
+
+SELECT CampaignId, CampaignName, StartDate, EndDate, SupplierName, CampaignSale, 
+        CampaignCurr AS CampaignCurrency, SampleValue, ItemValue, OrderSampleQty, OrderSampleVal, 
+        OrderItemQty, OrderItemVal, OrderTotalQty, OrderTotalVal, ReceiptSampleQty, ReceiptSampleVal, 
+        ReceiptItemQty, ReceiptItemVal, ReceiptTotalQty, ReceiptTotalVal, 
+        InvoiceSampleQty, InvoiceSampleVal, InvoiceItemQty, InvoiceItemVal, 
+        InvoiceTotalQty, InvoiceTotalVal, InvoicedValForSamples, InvoicedValForGoods, InvoicedValTotal
+FROM Reporting.CampaignDocumentOverview[USERID]
+
+</select>
+
+<fields>
+	<field name="CampaignId" type="string" width="30" />
+	<field name="CampaignName" type="string" width="200" />
+	<field name="StartDate" type="date" width="200" />
+	<field name="EndDate" type="date" width="200" />
+	<field name="SupplierName" type="string" width="200" />
+	<field name="CampaignSale" type="string" width="200" />
+	<field name="CampaignCurrency" type="string" width="200" />
+	<field name="SampleValue" type="string" width="200" />
+	<field name="ItemValue" type="string" width="200" />
+	<field name="OrderSampleQty" type="string" width="200" />
+	<field name="OrderSampleVal" type="string" width="200" />
+	<field name="OrderItemQty" type="string" width="200" />
+	<field name="OrderItemVal" type="string" width="200" />
+	<field name="OrderTotalQty" type="string" width="200" />
+	<field name="OrderTotalVal" type="string" width="200" />
+	<field name="ReceiptSampleQty" type="string" width="200" />
+	<field name="ReceiptSampleVal" type="string" width="200" />
+	<field name="ReceiptItemQty" type="string" width="200" />
+	<field name="ReceiptItemVal" type="string" width="200" />
+	<field name="ReceiptTotalQty" type="string" width="200" />
+	<field name="ReceiptTotalVal" type="string" width="200" />
+	<field name="InvoiceSampleQty" type="string" width="200" />
+	<field name="InvoiceSampleVal" type="string" width="200" />
+	<field name="InvoiceItemQty" type="string" width="200" />
+	<field name="InvoiceItemVal" type="string" width="200" />
+	<field name="InvoiceTotalQty" type="string" width="200" />
+	<field name="InvoiceTotalVal" type="string" width="200" />
+        <field name="InvoicedValForSamples" type="string" width="200" />
+        <field name="InvoicedValForGoods" type="string" width="200" />
+        <field name="InvoicedValTotal" type="string" width="200" />
+</fields>
+
+<initsql>
+SELECT @STARTDATE := [FROM];
+
+SELECT @ENDDATE := [TO];
+
+DROP TABLE IF EXISTS Reporting.CampaignDocumentOverview[USERID];
+CREATE TABLE Reporting.CampaignDocumentOverview[USERID] (
+  CampId INT(11) DEFAULT NULL,
+  CampaignId INT(11) DEFAULT NULL,
+  CampaignName VARCHAR(64) DEFAULT NULL,
+  StartDate DATE DEFAULT NULL,
+  EndDate DATE DEFAULT NULL,
+  SupplierName VARCHAR(64) DEFAULT NULL,
+  CampaignSale DECIMAL(20,2) DEFAULT 0,
+  CampaignCurr VARCHAR(6) DEFAULT NULL,
+  SampleValue DECIMAL(20,2) DEFAULT 0,
+  ItemValue DECIMAL(20,2) DEFAULT 0,
+  OrderSampleQty INT(11) DEFAULT 0,
+  OrderSampleVal DECIMAL(20,2) DEFAULT 0,
+  OrderItemQty INT(11) DEFAULT 0,
+  OrderItemVal DECIMAL(20,2) DEFAULT 0,
+  OrderTotalQty INT(11) DEFAULT 0,
+  OrderTotalVal DECIMAL(20,2) DEFAULT 0,
+  ReceiptSampleQty INT(11) DEFAULT 0,
+  ReceiptSampleVal DECIMAL(20,2) DEFAULT 0,
+  ReceiptItemQty INT(11) DEFAULT 0,
+  ReceiptItemVal DECIMAL(20,2) DEFAULT 0,
+  ReceiptTotalQty INT(11) DEFAULT 0,
+  ReceiptTotalVal DECIMAL(20,2) DEFAULT 0,
+  InvoiceSampleQty INT(11) DEFAULT 0,
+  InvoiceSampleVal DECIMAL(20,2) DEFAULT 0,
+  InvoiceItemQty INT(11) DEFAULT 0,
+  InvoiceItemVal DECIMAL(20,2) DEFAULT 0,
+  InvoiceTotalQty INT(11) DEFAULT 0,
+  InvoiceTotalVal DECIMAL(20,2) DEFAULT 0,
+  InvoicedValForSamples DECIMAL(20,2) DEFAULT 0,
+  InvoicedValForGoods DECIMAL(20,2) DEFAULT 0,
+  InvoicedValTotal DECIMAL(20,2) DEFAULT 0,
+  INDEX(CampaignId)
+) ENGINE=MYISAM DEFAULT CHARSET=latin1;
+
+/* CampaignId, CampaignName, StartDate, EndDate, SupplierId */
+INSERT INTO Reporting.CampaignDocumentOverview[USERID](CampId, CampaignId, CampaignName, StartDate, EndDate, SupplierName)
+SELECT Id, CampaignId, NAME, CampDateStart, CampDateStop, SupplierId
+FROM SaleCampaign
+WHERE CampDateStart BETWEEN @STARTDATE AND @ENDDATE;
+
+/* Supplier Name */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R, rvx_fdro.Partner P
+SET R.SupplierName = P.Name
+WHERE R.SupplierName = P.Id;
+
+/* Campaign Sales */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R SET R.CampaignSale = (
+SELECT SUM(T.ValueNetV) ValueNetV FROM (
+SELECT SUM(G.ValueNetV * E.rate) ValueNetV, G.CampaignId
+FROM rvx_fdro.SaleOrder F, rvx_fdro.SaleOrderLine G,  Currency.exchange_rate E
+WHERE F.Date  BETWEEN DATE_SUB(@STARTDATE, INTERVAL 7 DAY) AND DATE_ADD(@ENDDATE , INTERVAL 7 DAY)
+AND F.Id = G.ParentId
+AND G.CampaignId IS NOT NULL
+AND E.CUR1 = F.CurrencyType
+AND E.CUR2 = 'EUR'
+AND G.StockKeep = 1
+AND E.ratedate = F.Date
+GROUP BY CampaignId
+UNION
+SELECT SUM(G.ValueNetV * E.rate) ValueNetV, G.CampaignId
+FROM rvx_fdcz.SaleOrder F, rvx_fdcz.SaleOrderLine G,  Currency.exchange_rate E
+WHERE F.Date  BETWEEN DATE_SUB(@STARTDATE, INTERVAL 7 DAY) AND DATE_ADD(@ENDDATE , INTERVAL 7 DAY)
+AND F.Id = G.ParentId
+AND G.CampaignId IS NOT NULL
+AND E.CUR1 = F.CurrencyType
+AND E.CUR2 = 'EUR'
+AND G.StockKeep = 1
+AND E.ratedate = F.Date
+GROUP BY CampaignId
+UNION
+SELECT SUM(G.ValueNetV * E.rate) ValueNetV, G.CampaignId
+FROM rvx_fdhu.SaleOrder F, rvx_fdhu.SaleOrderLine G,  Currency.exchange_rate E
+WHERE F.Date  BETWEEN DATE_SUB(@STARTDATE, INTERVAL 7 DAY) AND DATE_ADD(@ENDDATE , INTERVAL 7 DAY)
+AND F.Id = G.ParentId
+AND G.CampaignId IS NOT NULL
+AND E.CUR1 = F.CurrencyType
+AND E.CUR2 = 'EUR'
+AND G.StockKeep = 1
+AND E.ratedate = F.Date
+GROUP BY CampaignId
+UNION
+SELECT SUM(G.ValueNetV * E.rate) ValueNetV, G.CampaignId
+FROM rvx_fdsk.SaleOrder F, rvx_fdsk.SaleOrderLine G,  Currency.exchange_rate E
+WHERE F.Date  BETWEEN DATE_SUB(@STARTDATE, INTERVAL 7 DAY) AND DATE_ADD(@ENDDATE, INTERVAL 7 DAY)
+AND F.Id = G.ParentId
+AND E.CUR1 = F.CurrencyType
+AND E.CUR2 = 'EUR'
+AND G.StockKeep = 1
+AND E.ratedate = F.Date
+GROUP BY CampaignId
+UNION
+SELECT SUM(G.ValueNetV * E.rate) ValueNetV, G.CampaignId
+FROM rvx_fdsi.SaleOrder F, rvx_fdsi.SaleOrderLine G,  Currency.exchange_rate E
+WHERE F.Date  BETWEEN DATE_SUB(@STARTDATE, INTERVAL 7 DAY) AND DATE_ADD(@ENDDATE, INTERVAL 7 DAY)
+AND F.Id = G.ParentId
+AND G.CampaignId IS NOT NULL
+AND E.CUR1 = F.CurrencyType
+AND E.CUR2 = 'EUR'
+AND G.StockKeep = 1
+AND E.ratedate = F.Date
+GROUP BY CampaignId
+UNION
+SELECT SUM(G.ValueNetV * E.rate) ValueNetV, G.CampaignId
+FROM rvx_fdbg.SaleOrder F, rvx_fdbg.SaleOrderLine G,  Currency.exchange_rate E
+WHERE F.Date  BETWEEN DATE_SUB(@STARTDATE, INTERVAL 7 DAY) AND DATE_ADD(@ENDDATE, INTERVAL 7 DAY)
+AND F.Id = G.ParentId
+AND G.CampaignId IS NOT NULL
+AND E.CUR1 = F.CurrencyType
+AND E.CUR2 = 'EUR'
+AND G.StockKeep = 1
+AND E.ratedate = F.Date
+GROUP BY CampaignId) T WHERE T.CampaignId = R.CampaignId);
+
+/* Campaign Currency */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.CampaignCurr = (
+SELECT A.WSPCurrency
+FROM rvx_fdro.ItemBuyQuote A
+WHERE A.CampaignId= R.CampId
+GROUP BY WSPCurrency ORDER BY COUNT(*) DESC LIMIT 1);
+
+/* Samples total value at WSP */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.SampleValue = (SELECT IFNULL(SUM(A.WSP * G.Quantity), 0)
+FROM rvx_fdro.BuyOrder F, rvx_fdro.BuyOrderLine G,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND F.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND F.DocType = 'CCUMPS'
+	AND F.IsPosted = 1);
+
+/* Item total value at WSP */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.ItemValue = (SELECT IFNULL(SUM(A.WSP * G.Quantity), 0)
+FROM rvx_fdro.BuyOrder F, rvx_fdro.BuyOrderLine G,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND F.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND F.DocType = 'CCUMP'
+	AND F.IsPosted = 1);
+
+/* ORDER */
+/* Samples total quantity */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.OrderSampleQty = (SELECT IFNULL(SUM(G.Quantity), 0)
+FROM rvx_fdro.BuyOrder F, rvx_fdro.BuyOrderLine G,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND F.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND F.DocType = 'CCUMPS'
+	AND F.IsPosted = 1);
+
+/* Samples total value at purchase order  price */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.OrderSampleVal = (SELECT IFNULL(SUM(G.ValueNetV), 0)
+FROM rvx_fdro.BuyOrder F, rvx_fdro.BuyOrderLine G,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND F.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND F.DocType = 'CCUMPS'
+	AND F.IsPosted = 1);
+
+
+/* Goods total quantity */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.OrderItemQty = (SELECT IFNULL(SUM(G.Quantity), 0)
+FROM rvx_fdro.BuyOrder F, rvx_fdro.BuyOrderLine G,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND F.CampaignId = R.CampaignId
+	AND F.DocType = 'CCUMP'
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND F.IsPosted = 1);
+
+/* Goods total value at purchase order price */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.OrderItemVal = (SELECT IFNULL(SUM(G.ValueNetV), 0)
+FROM rvx_fdro.BuyOrder F, rvx_fdro.BuyOrderLine G,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND F.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND F.DocType = 'CCUMP'
+	AND F.IsPosted = 1);
+
+/* Total quantity */
+UPDATE Reporting.CampaignDocumentOverview[USERID] SET
+OrderTotalQty = IFNULL(OrderSampleQty, 0) + IFNULL(OrderItemQty, 0);
+
+/* Total value */
+UPDATE Reporting.CampaignDocumentOverview[USERID] SET
+OrderTotalVal= IFNULL(OrderSampleVal, 0) + IFNULL(OrderItemVal, 0);
+
+/* RECEPTION */
+/* Receipt Samples total quantity */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.ReceiptSampleQty = (SELECT IFNULL(SUM(G.Quantity), 0)
+FROM rvx_fdro.StockReceipt F, rvx_fdro.StockReceiptLine G,
+     rvx_fdro.BuyDelivery D, rvx_fdro.BuyOrder O,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND O.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND D.RefNumber = O.Number
+	AND O.DocType = 'CCUMPS'
+	AND F.RefNumber = D.Number
+	AND F.IsPosted = 1);
+
+/* Receipt Samples total value */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.ReceiptSampleVal = (SELECT IFNULL(SUM(G.ValueNetV), 0)
+FROM rvx_fdro.StockReceipt F, rvx_fdro.StockReceiptLine G,
+     rvx_fdro.BuyDelivery D, rvx_fdro.BuyOrder O,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND O.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND D.RefNumber = O.Number
+	AND O.DocType = 'CCUMPS'
+	AND F.RefNumber = D.Number
+	AND F.IsPosted = 1);
+
+/* Receipt Items total quantity */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.ReceiptItemQty = (SELECT IFNULL(SUM(G.Quantity), 0)
+FROM rvx_fdro.StockReceipt F, rvx_fdro.StockReceiptLine G,
+     rvx_fdro.BuyDelivery D, rvx_fdro.BuyOrder O,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND O.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND D.RefNumber = O.Number
+	AND O.DocType = 'CCUMP'
+	AND F.RefNumber = D.Number
+	AND F.IsPosted = 1);
+
+/* Receipt Items total value */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.ReceiptItemVal = (SELECT IFNULL(SUM(G.ValueNetV), 0)
+FROM rvx_fdro.StockReceipt F, rvx_fdro.StockReceiptLine G,
+     rvx_fdro.BuyDelivery D, rvx_fdro.BuyOrder O,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND O.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND D.RefNumber = O.Number
+	AND O.DocType = 'CCUMP'
+	AND F.RefNumber = D.Number
+	AND F.IsPosted = 1);
+
+/* Total quantity */
+UPDATE Reporting.CampaignDocumentOverview[USERID] SET
+ReceiptTotalQty = IFNULL(ReceiptSampleQty, 0) + IFNULL(ReceiptItemQty, 0);
+
+/* Total value */
+UPDATE Reporting.CampaignDocumentOverview[USERID] SET
+ReceiptTotalVal= IFNULL(ReceiptSampleVal, 0) + IFNULL(ReceiptItemVal, 0);
+
+/* INVOICE */
+/* Invoice total quantity */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.InvoiceTotalQty = (SELECT IFNULL(SUM(G.Quantity), 0)
+FROM rvx_fdro.BuyInvoice F, rvx_fdro.BuyInvoiceLine G,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND F.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND F.IsPosted = 1);
+
+/* Invoice total value */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET R.InvoiceTotalVal = (SELECT IFNULL(SUM(G.ValueNetV), 0)
+FROM rvx_fdro.BuyInvoice F, rvx_fdro.BuyInvoiceLine G,
+     rvx_fdro.ItemBuyQuote A
+WHERE F.Id = G.ParentId
+	AND F.CampaignId = R.CampaignId
+	AND A.CampaignId = R.CampId
+	AND G.ItemId = A.ItemId
+	AND F.IsPosted = 1);
+        
+/* Invoiced value for samples */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET InvoicedValForSamples = (
+        SELECT IFNULL(SUM(Value), 0)
+        FROM SaleCampaignInvoice
+        WHERE Type = 'Samples'
+                AND DocType = 'Invoice'
+                AND Status >= 3
+                AND CampaignId = R.CampaignId
+);
+        
+/* Invoiced value for goods */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET InvoicedValForGoods = (
+        SELECT IFNULL(SUM(Value), 0)
+        FROM SaleCampaignInvoice
+        WHERE Type = 'Goods'
+                AND DocType = 'Invoice'
+                AND Status >= 3
+                AND CampaignId = R.CampaignId
+);
+        
+/* Invoiced value total */
+UPDATE Reporting.CampaignDocumentOverview[USERID] R
+SET InvoicedValTotal = InvoicedValForSamples + InvoicedValForGoods;
+
+</initsql>
+</xml>

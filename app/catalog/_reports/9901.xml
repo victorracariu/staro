@@ -1,0 +1,73 @@
+<xml>
+<title>Item List</title>
+
+<select>
+	SELECT A.Id, A.Code, A.Code2, A.Name, A.EAN, A.Description, A.Vat, A.StockKeep, A.StockUnit, A.ImageFolder, A.ItemGender AS Gender,
+	A.ItemColor AS Color, A.SellPriceNet, A.SellPriceTot, A.SellCurrency, A.SellPriceNetV, A.SellPriceTotV, A.CostPriceNet, A.CostPriceTot,
+	A.AccStock, A.AccCost, A.AccIncome, A.Weight, A.Volume, A.Warranty,	A.Inactive, C.Name Category, S.Name Subcategory, B.Name Brand
+		FROM ItemCategory C, ItemBrand B, Item A 
+		LEFT JOIN ItemSubcategory S ON (A.SubcategoryId = S.Id)
+	WHERE A.CategoryId=C.Id 
+	AND A.BrandId=B.Id
+	ORDER BY C.Name, S.Name, A.Code, A.Name
+</select>
+
+<fields>
+	<field name="Code" type="string" width="100" />
+	<field name="Code2" type="string" hidden="true" width="100" />
+	<field name="Name" type="string" width="200" />
+	<field name="EAN" type="string" width="100" hidden="true" />
+	<field name="Description" type="string" width="100" hidden="true" />
+	<field name="Category" type="string" width="100" hidden="true" />
+	<field name="Subcategory" type="string" width="100" hidden="true" />
+	<field name="Brand" type="string" width="100" hidden="true" />
+	<field name="Gender" type="string" width="100" hidden="true" />
+	<field name="Color" type="string" width="100" hidden="true" />
+	<field name="Vat" type="string" width="100" hidden="true" />
+	<field name="StockKeep" type="bool" hidden="true" />
+	<field name="StockUnit" type="string" width="50" />
+	<field name="SellPriceNet" type="money" width="100" />
+	<field name="SellPriceTot" type="money" width="100" />
+	<field name="SellCurrency" type="money" width="100" hidden="true" />
+	<field name="SellPriceNetV" type="money" width="100" hidden="true" />
+	<field name="SellPriceTotV" type="money" width="100" hidden="true" />
+	<field name="CostPriceNet" type="money" width="100" />
+	<field name="AccStock" type="combo" width="100" hidden="true" />
+	<field name="AccCost" type="combo" width="100" hidden="true" />
+	<field name="AccIncome" type="combo" width="100" hidden="true" />
+	<field name="Weight" type="string" width="50" hidden="true" />
+	<field name="Volume" type="string" width="50" hidden="true" />
+	<field name="Warranty" type="string" width="100" hidden="true" />
+	<field name="Inactive" type="bool" hidden="true" />
+	<field name="ImageFolder" type="string" hidden="true" width="250"/>
+	
+	<group name="Category" type="string" />
+</fields>
+
+<params>
+	<param control="lookup" type="integer" name="A.CategoryId" lookupmodel="catalog/item_category" lookuptable="ItemCategory" />
+	<param control="lookup" type="integer" name="A.SubcategoryId" lookupmodel="catalog/item_subcategory" lookuptable="ItemSubcategory" />	
+	<param control="lookup" type="integer" name="A.BrandId" lookupmodel="catalog/item_brand" lookuptable="ItemBrand" />
+	<param control="lookup" type="string" name="A.AccStock" lookupmodel="account/account" lookuptable="Account" lookupname="Code" />
+	<param control="lookup" type="string" name="A.AccCost" lookupmodel="account/account" lookuptable="Account" lookupname="Code" />
+	<param control="lookup" type="string" name="A.AccIncome" lookupmodel="account/account" lookuptable="Account" lookupname="Code" />
+	<param control="lookup" type="string" name="A.StockUnit" lookupmodel="catalog/item_unit" lookuptable="ItemUnit" lookupname="Code" />
+	<param control="lookup" type="integer" name="A.CampaignId" lookupmodel="catalog/item_campaign" lookuptable="SaleCampaign" lookupname="CampaignId" lookupkey="Id" />
+	<param control="combo" type="integer" name="A.StockKeep" comboitems="Y|N" combovalues="1|0" />
+	<param control="combo" type="integer" name="A.Inactive" comboitems="Y|N" combovalues="1|0" />
+	<param control="text" type="string"   name="A.Code" />
+	<param control="text" type="string"   name="A.Name" />	
+	<param control="number" type="number" name="A.SellPriceNet" />
+	<param control="number" type="number" name="A.SellPriceTot" />
+	<param control="number" type="number" name="A.Vat" />
+	<param control="number" type="number" name="A.MasterId" />
+</params>
+
+<initsqlx>
+UPDATE Item A SET A.CostPriceNet=(SELECT S.CostIn FROM StockOperation S WHERE S.ItemId=A.Id AND QtyIn>0 ORDER BY DocDate DESC LIMIT 1 )
+WHERE A.CostPriceNet IS NULL OR A.CostPriceNet = 0;
+
+UPDATE Item A SET A.CostPriceNet=0 WHERE A.CostPriceNet IS NULL;
+</initsqlx>
+
+</xml>

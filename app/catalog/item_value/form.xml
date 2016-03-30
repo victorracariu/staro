@@ -1,0 +1,20 @@
+<xml>
+<form title="Item Value" />
+
+<tabs>
+	<tab id="1" caption="Detail" columns="2" />
+</tabs>
+
+<boxes>
+	<box id="11" tab="1" caption="Detail" width="450"/>
+</boxes>
+
+<controls>
+	<control box="11" field="Id" type="hidden" />
+        <control box="11" field="ItemId" type="lookup" width="300" />
+        <control box="11" field="AttributeId" type="lookup" width="300" />
+        <control box="11" field="Name" type="text" width="300" />
+        <control box="11" field="Value" type="text" width="300" />
+</controls>
+
+</xml>

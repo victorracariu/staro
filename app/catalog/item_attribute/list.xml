@@ -1,0 +1,17 @@
+<xml>
+<view title="Item Attribute" formwidth="800" formheight="600" />
+<sql>
+SELECT A.Id, A.Name, S.Name Subcategory, A.IsMandatory, A.IsFilter
+FROM ItemAttribute A, ItemSubcategory S
+        WHERE A.SubcategoryId = S.Id
+</sql>
+
+<columns>
+	<column field="Id" type="integer" hidden="true" />
+	<column field="Name" type="string" width="150" />
+        <column field="Subcategory" type="string" width="150" />
+        <column field="IsMandatory" type="bool" width="150" caption="Mandatory"/>
+        <column field="IsFilter" type="bool" width="150" caption="Filter"/>
+</columns>
+
+</xml>

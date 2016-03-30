@@ -1,0 +1,16 @@
+<xml>
+<view title="Item Value" formwidth="800" formheight="600" />
+<sql>
+SELECT A.Id, A.Name, A.Value, A.NameEn, A.ValueEn
+FROM ItemValue A
+</sql>
+
+<columns>
+	<column field="Id" type="integer" hidden="true" />
+	<column field="Name" type="string" width="150" caption="Name DE"/>
+        <column field="Value" type="string" width="150" editor="true" caption="Value DE"/>
+        <column field="NameEn" type="string" width="150" editor="true" caption="Name EN"/>
+        <column field="ValueEn" type="string" width="150" editor="true" caption="Value EN"/>
+</columns>
+
+</xml>

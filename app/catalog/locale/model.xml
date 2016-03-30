@@ -1,0 +1,9 @@
+<xml>
+<model tablename="Locale" />
+
+<fields>
+	<field name="Id" type="integer"/>
+	<field name="Locale" type="string" mandatory="true" unique="true"/>
+</fields>
+
+</xml>

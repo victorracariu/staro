@@ -1,0 +1,19 @@
+<xml>
+<view title="Item Values" formwidth="800" formheight="600" />
+<sql>
+SELECT A.Id, A.ItemId, A.Name, A.Value, B.IsMandatory, B.IsFilter
+FROM ItemValue A, ItemAttribute B
+        WHERE A.ItemId=:ParentId
+        AND A.AttributeId = B.Id
+        AND (B.IsMandatory = 1 OR B.IsFilter = 1)
+</sql>
+
+<columns>
+	<column field="Id" type="integer" hidden="true" />
+	<column field="Name" type="string" width="150"/>
+        <column field="Value" type="string" width="500" editor="true" />
+        <column field="IsMandatory" type="bool" width="150"/>
+        <column field="IsFilter" type="bool" width="150"/>
+</columns>
+
+</xml>

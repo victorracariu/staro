@@ -1,0 +1,226 @@
+<xml>
+<title>Item Brand Restrictions</title>
+
+<select>
+   SELECT * FROM Reporting.TempItemBrand9006[USERID]
+</select>
+
+<fields>
+	<field name="ItemId" type="string" width="100" />
+	<field name="Code" caption="ItemCode" type="string" width="100" />
+	<field name="Code2" type="string" width="100" />
+	<field name="ItemName" caption="Item Name" type="string" width="100" />
+	<field name="BrandName" caption="Brand" type="string" width="100" />
+
+	<field name="ItemRestrictionRo" type="string" width="100" />
+	<field name="CategoryRestrictionRo" type="string" width="100" />
+	<field name="BrandRestrictionRo" type="string" width="100" />
+
+	<field name="ItemRestrictionBg" type="string" width="100" />
+	<field name="CategoryRestrictionBg" type="string" width="100" />
+	<field name="BrandRestrictionBg" type="string" width="100" />
+
+	<field name="ItemRestrictionCz" type="string" width="100" />
+	<field name="CategoryRestrictionCz" type="string" width="100" />
+	<field name="BrandRestrictionCz" type="string" width="100" />
+
+	<field name="ItemRestrictionHu" type="string" width="100" />
+	<field name="CategoryRestrictionHu" type="string" width="100" />
+	<field name="BrandRestrictionHu" type="string" width="100" />
+
+	<field name="ItemRestrictionPl" type="string" width="100" />
+	<field name="CategoryRestrictionPl" type="string" width="100" />
+	<field name="BrandRestrictionPl" type="string" width="100" />
+
+	<field name="ItemRestrictionSi" type="string" width="100" />
+	<field name="CategoryRestrictionSi" type="string" width="100" />
+	<field name="BrandRestrictionSi" type="string" width="100" />
+
+	<field name="ItemRestrictionSk" type="string" width="100" />
+	<field name="CategoryRestrictionSk" type="string" width="100" />
+	<field name="BrandRestrictionSk" type="string" width="100" />
+</fields>
+
+<params>
+	<param control="lookup" type="integer" name="BrandId" lookupmodel="catalog/item_brand" lookuptable="ItemBrand" />
+	<param control="text" type="string"   name="Code" />
+    	<param control="text" type="string"   name="Code2" />
+</params>
+
+<initsql>
+
+SELECT @FILTERS := 0;
+
+[PARAM] SELECT IF([BrandId] != '', 1, @FILTERS) INTO @FILTERS;
+[PARAM] SELECT IF([Code] != '', 1, @FILTERS) INTO @FILTERS;
+[PARAM] SELECT IF([Code2] != '', 1, @FILTERS) INTO @FILTERS;
+
+CALL Reporting.CheckFilters(@FILTERS);
+CALL Reporting.KillReport(@FILTERS);
+
+DROP TABLE IF EXISTS Reporting.TempItemBrand9006[USERID];
+
+CREATE TABLE Reporting.TempItemBrand9006[USERID] (
+	ItemId INT,
+	Code VARCHAR(64),
+	Code2 VARCHAR(64),
+	ItemName VARCHAR(200),
+	BrandName VARCHAR(200),
+
+	BrandRestrictionRo INT(1) DEFAULT 0,
+	BrandRestrictionBg INT(1) DEFAULT 0,
+	BrandRestrictionCz INT(1) DEFAULT 0,
+	BrandRestrictionHu INT(1) DEFAULT 0,
+	BrandRestrictionPl INT(1) DEFAULT 0,
+	BrandRestrictionSi INT(1) DEFAULT 0,
+	BrandRestrictionSk INT(1) DEFAULT 0,
+
+	CategoryRestrictionRo INT(1) DEFAULT 0,
+	CategoryRestrictionBg INT(1) DEFAULT 0,
+	CategoryRestrictionCz INT(1) DEFAULT 0,
+	CategoryRestrictionHu INT(1) DEFAULT 0,
+	CategoryRestrictionPl INT(1) DEFAULT 0,
+	CategoryRestrictionSi INT(1) DEFAULT 0,
+	CategoryRestrictionSk INT(1) DEFAULT 0,
+
+	ItemRestrictionRo INT(1) DEFAULT 0,
+	ItemRestrictionBg INT(1) DEFAULT 0,
+	ItemRestrictionCz INT(1) DEFAULT 0,
+	ItemRestrictionHu INT(1) DEFAULT 0,
+	ItemRestrictionPl INT(1) DEFAULT 0,
+	ItemRestrictionSi INT(1) DEFAULT 0,
+	ItemRestrictionSk INT(1) DEFAULT 0
+);
+
+ALTER TABLE Reporting.TempItemBrand9006[USERID] ADD INDEX ItemId(ItemId);
+ALTER TABLE Reporting.TempItemBrand9006[USERID] ADD INDEX Code(Code);
+ALTER TABLE Reporting.TempItemBrand9006[USERID] ADD INDEX Code2(Code2);
+
+
+INSERT INTO Reporting.TempItemBrand9006[USERID]
+(ItemId, Code, Code2, ItemName, BrandName, BrandRestrictionRo, BrandRestrictionBg, BrandRestrictionCz,
+	BrandRestrictionHu, BrandRestrictionPl, BrandRestrictionSi, BrandRestrictionSk)
+SELECT I.Id ItemId, I.Code, I.Code2, I.Name ItemName, IB.Name BrandName,
+	IF(DBro.Id is not null, 1, 0) BrandRestrictionRo,
+	IF(DBbg.Id is not null, 1, 0) BrandRestrictionBg,
+	IF(DBcz.Id is not null, 1, 0) BrandRestrictionCz,
+	IF(DBhu.Id is not null, 1, 0) BrandRestrictionHu,
+	IF(DBpl.Id is not null, 1, 0) BrandRestrictionPl,
+	IF(DBsi.Id is not null, 1, 0) BrandRestrictionSi,
+	IF(DBsk.Id is not null, 1, 0) BrandRestrictionSk
+FROM Item I
+INNER JOIN ItemBrand IB ON IB.Id = I.BrandId
+LEFT JOIN DisabledBrand DBro ON DBro.BrandId = IB.Id AND DBro.Country = 'ro'
+LEFT JOIN DisabledBrand DBbg ON DBbg.BrandId = IB.Id AND DBbg.Country = 'bg'
+LEFT JOIN DisabledBrand DBcz ON DBcz.BrandId = IB.Id AND DBcz.Country = 'cz'
+LEFT JOIN DisabledBrand DBhu ON DBhu.BrandId = IB.Id AND DBhu.Country = 'hu'
+LEFT JOIN DisabledBrand DBpl ON DBpl.BrandId = IB.Id AND DBpl.Country = 'pl'
+LEFT JOIN DisabledBrand DBsi ON DBsi.BrandId = IB.Id AND DBsi.Country = 'si'
+LEFT JOIN DisabledBrand DBsk ON DBsk.BrandId = IB.Id AND DBsk.Country = 'sk'
+WHERE ( DBro.Id is not null OR DBbg.Id is not null OR DBcz.Id is not null OR DBhu.Id is not null
+		OR DBpl.Id is not null OR DBsi.Id is not null OR DBsk.Id is not null )
+	[PARAM] AND I.BrandId = [BrandId]
+	[PARAM] AND I.Code = [Code]
+	[PARAM] AND I.Code2 = [Code2]
+;
+
+DROP TABLE IF EXISTS Reporting.TempItemCategory9006[USERID];
+CREATE TABLE Reporting.TempItemCategory9006[USERID] AS
+SELECT I.Id ItemId, I.Code, I.Code2, I.Name ItemName, IB.Name BrandName,
+	IF(DBCro.Id is not null, 1, 0) CategoryRestrictionRo,
+	IF(DBCbg.Id is not null, 1, 0) CategoryRestrictionBg,
+	IF(DBCcz.Id is not null, 1, 0) CategoryRestrictionCz,
+	IF(DBChu.Id is not null, 1, 0) CategoryRestrictionHu,
+	IF(DBCpl.Id is not null, 1, 0) CategoryRestrictionPl,
+	IF(DBCsi.Id is not null, 1, 0) CategoryRestrictionSi,
+	IF(DBCsk.Id is not null, 1, 0) CategoryRestrictionSk,
+	0 FoundInMain
+FROM Item I
+INNER JOIN ItemBrand IB ON IB.Id = I.BrandId
+LEFT JOIN DisabledBrandCategory DBCro ON DBCro.BrandId = IB.Id AND DBCro.CategoryId = I.CategoryId AND DBCro.Country = 'ro'
+LEFT JOIN DisabledBrandCategory DBCbg ON DBCbg.BrandId = IB.Id AND DBCbg.CategoryId = I.CategoryId AND DBCbg.Country = 'bg'
+LEFT JOIN DisabledBrandCategory DBCcz ON DBCcz.BrandId = IB.Id AND DBCcz.CategoryId = I.CategoryId AND DBCcz.Country = 'cz'
+LEFT JOIN DisabledBrandCategory DBChu ON DBChu.BrandId = IB.Id AND DBChu.CategoryId = I.CategoryId AND DBChu.Country = 'hu'
+LEFT JOIN DisabledBrandCategory DBCpl ON DBCpl.BrandId = IB.Id AND DBCpl.CategoryId = I.CategoryId AND DBCpl.Country = 'pl'
+LEFT JOIN DisabledBrandCategory DBCsi ON DBCsi.BrandId = IB.Id AND DBCsi.CategoryId = I.CategoryId AND DBCsi.Country = 'si'
+LEFT JOIN DisabledBrandCategory DBCsk ON DBCsk.BrandId = IB.Id AND DBCsk.CategoryId = I.CategoryId AND DBCsk.Country = 'sk'
+WHERE ( DBCro.Id is not null OR DBCbg.Id is not null OR DBCcz.Id is not null OR DBChu.Id is not null
+		OR DBCpl.Id is not null OR DBCsi.Id is not null OR DBCsk.Id is not null )
+	[PARAM] AND I.BrandId = [BrandId]
+	[PARAM] AND I.Code = [Code]
+	[PARAM] AND I.Code2 = [Code2]
+;
+
+
+ALTER TABLE Reporting.TempItemCategory9006[USERID] ADD INDEX ItemId(ItemId);
+ALTER TABLE Reporting.TempItemCategory9006[USERID] ADD INDEX Code(Code);
+ALTER TABLE Reporting.TempItemCategory9006[USERID] ADD INDEX Code2(Code2);
+
+UPDATE Reporting.TempItemBrand9006[USERID] T
+INNER JOIN Reporting.TempItemCategory9006[USERID] S ON T.ItemId = S.ItemId
+SET T.CategoryRestrictionRo = S.CategoryRestrictionRo,
+	T.CategoryRestrictionBg = S.CategoryRestrictionBg,
+	T.CategoryRestrictionCz = S.CategoryRestrictionCz,
+	T.CategoryRestrictionHu = S.CategoryRestrictionHu,
+	T.CategoryRestrictionPl = S.CategoryRestrictionPl,
+	T.CategoryRestrictionSi = S.CategoryRestrictionSi,
+	T.CategoryRestrictionSk = S.CategoryRestrictionSk,
+	S.FoundInMain = 1;
+
+INSERT INTO Reporting.TempItemBrand9006[USERID]
+(ItemId, Code, Code2, ItemName, BrandName, CategoryRestrictionRo, CategoryRestrictionBg, CategoryRestrictionCz,
+	CategoryRestrictionHu, CategoryRestrictionPl, CategoryRestrictionSi, CategoryRestrictionSk)
+SELECT ItemId, Code, Code2, ItemName, BrandName, CategoryRestrictionRo, CategoryRestrictionBg, CategoryRestrictionCz,
+	CategoryRestrictionHu, CategoryRestrictionPl, CategoryRestrictionSi, CategoryRestrictionSk
+FROM Reporting.TempItemCategory9006[USERID]
+WHERE FoundInMain = 0;
+
+DROP TABLE IF EXISTS Reporting.TempItemRestricted9006[USERID];
+CREATE TABLE Reporting.TempItemRestricted9006[USERID] AS
+SELECT I.Id ItemId, I.Code, I.Code2, I.Name ItemName, IB.Name BrandName,
+	IF(DIro.Id is not null, 1, 0) ItemRestrictionRo,
+	IF(DIbg.Id is not null, 1, 0) ItemRestrictionBg,
+	IF(DIcz.Id is not null, 1, 0) ItemRestrictionCz,
+	IF(DIhu.Id is not null, 1, 0) ItemRestrictionHu,
+	IF(DIpl.Id is not null, 1, 0) ItemRestrictionPl,
+	IF(DIsi.Id is not null, 1, 0) ItemRestrictionSi,
+	IF(DIsk.Id is not null, 1, 0) ItemRestrictionSk,
+	0 FoundInMain
+FROM Item I
+INNER JOIN ItemBrand IB ON IB.Id = I.BrandId
+LEFT JOIN DisabledItem DIro ON DIro.ItemId = I.Id AND DIro.Country = 'ro'
+LEFT JOIN DisabledItem DIbg ON DIbg.ItemId = I.Id AND DIbg.Country = 'bg'
+LEFT JOIN DisabledItem DIcz ON DIcz.ItemId = I.Id AND DIcz.Country = 'cz'
+LEFT JOIN DisabledItem DIhu ON DIhu.ItemId = I.Id AND DIhu.Country = 'hu'
+LEFT JOIN DisabledItem DIpl ON DIpl.ItemId = I.Id AND DIpl.Country = 'pl'
+LEFT JOIN DisabledItem DIsi ON DIsi.ItemId = I.Id AND DIsi.Country = 'si'
+LEFT JOIN DisabledItem DIsk ON DIsk.ItemId = I.Id AND DIsk.Country = 'sk'
+WHERE ( DIro.Id is not null OR DIbg.Id is not null OR DIcz.Id is not null OR DIhu.Id is not null
+		OR DIpl.Id is not null OR DIsi.Id is not null OR DIsk.Id is not null )
+	[PARAM] AND I.BrandId = [BrandId]
+	[PARAM] AND I.Code = [Code]
+	[PARAM] AND I.Code2 = [Code2]
+;
+
+UPDATE Reporting.TempItemBrand9006[USERID] T
+INNER JOIN Reporting.TempItemRestricted9006[USERID] S ON T.ItemId = S.ItemId
+SET T.ItemRestrictionRo = S.ItemRestrictionRo,
+	T.ItemRestrictionBg = S.ItemRestrictionBg,
+	T.ItemRestrictionCz = S.ItemRestrictionCz,
+	T.ItemRestrictionHu = S.ItemRestrictionHu,
+	T.ItemRestrictionPl = S.ItemRestrictionPl,
+	T.ItemRestrictionSi = S.ItemRestrictionSi,
+	T.ItemRestrictionSk = S.ItemRestrictionSk,
+	S.FoundInMain = 1;
+
+INSERT INTO Reporting.TempItemBrand9006[USERID]
+(ItemId, Code, Code2, ItemName, BrandName, ItemRestrictionRo, ItemRestrictionBg, ItemRestrictionCz,
+	ItemRestrictionHu, ItemRestrictionPl, ItemRestrictionSi, ItemRestrictionSk)
+SELECT ItemId, Code, Code2, ItemName, BrandName, ItemRestrictionRo, ItemRestrictionBg, ItemRestrictionCz,
+	ItemRestrictionHu, ItemRestrictionPl, ItemRestrictionSi, ItemRestrictionSk
+FROM Reporting.TempItemRestricted9006[USERID]
+WHERE FoundInMain = 0;
+
+
+</initsql>
+</xml>

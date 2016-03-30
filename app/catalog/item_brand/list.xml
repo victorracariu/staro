@@ -1,0 +1,13 @@
+<xml>
+<view title="Items Brand" formwidth="800" formheight="600" />
+<sql>
+SELECT A.Id, A.Name
+FROM ItemBrand A
+</sql>
+
+<columns>
+	<column field="Id" type="integer" hidden="true" />
+	<column field="Name" type="string" width="150" />
+</columns>
+
+</xml>

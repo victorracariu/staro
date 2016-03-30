@@ -1,0 +1,8 @@
+<xml>
+<menu id="1"   name="item1" title="Items" folder="false" />
+<menu id="1.1" name="item" title="Item List" />
+<menu id="1.2" name="item_category" title="Item Category" />
+<menu id="1.3" name="item_subcategory" title="Item Subcategory" />
+<menu id="1.4" name="item_attribute" title="Item Attribute" />
+<menu id="1.5" name="item_brand" title="Item Brand" />
+</xml>

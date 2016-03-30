@@ -1,0 +1,33 @@
+<xml>
+<form title="Item" />
+
+<tabs>
+	<tab id="1" caption="Detail" columns="2" />
+</tabs>
+
+<boxes>
+	<box id="11" tab="1" caption="Detail" width="450"/>
+        <box id="12" tab="1" caption="Description" width="550"/>
+        <box id="2" tab="1" caption="Values" width="1000" gridmodel="catalog/item_value" colspan="4" gridedit="true"  />
+</boxes>
+
+<controls>
+	<control box="11" field="Id" type="hidden" />
+	<control box="11" field="Code" type="text" width="300" />
+	<control box="11" field="Name" type="text" width="300"/>
+        <control box="11" field="EAN" type="text" width="300" />
+        <control box="11" field="CategoryId" type="combo" width="300" caption="Category" />
+        <control box="11" field="SubcategoryId" type="lookup" width="300" caption="Subcategory" />
+        <control box="11" field="BrandId" type="lookup" width="300" caption="Brand" />
+
+        <control box="11" field="IsContent" type="check" width="300" caption="Content" />
+        <control box="11" field="IsValidated" type="check" width="300" caption="Validated" />
+
+        <control box="12" field="Description" type="memo" width="500" height="200" hidelabel="true"/>
+</controls>
+
+<actions>
+        <action caption="Translate" url="catalog/item/translate" />
+</actions>
+
+</xml>

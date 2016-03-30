@@ -1,0 +1,23 @@
+<xml>
+<title>Category Units</title>
+
+<select>
+	SELECT ICU.Code, ICU.Name, ICT.Name CategoryType, IC.Name Category
+	FROM ItemCatUnit ICU, ItemCatType ICT, ItemCategory IC
+	WHERE ICU.CategoryId = IC.Id AND ICU.CatTypeId = ICT.Id
+	ORDER BY IC.Name, ICT.Name, ICU.Name
+</select>
+
+<fields>
+	<field name="Code" type="string" width="100" />
+	<field name="Name" type="string" width="200" />
+        <field name="CategoryType" type="string" width="200" caption="Category type" />
+	<field name="Category" type="string" width="200" />
+</fields>
+
+<params>
+	<param control="lookup" type="integer" name="ICU.CategoryId" lookupmodel="catalog/item_category" lookuptable="ItemCategory" caption="Category" />
+        <param control="lookup" type="integer" name="ICU.CatTypeId" lookupmodel="catalog/item_cat_type" lookuptable="ItemCatType" caption="Category type" />
+</params>
+
+</xml>

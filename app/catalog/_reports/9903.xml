@@ -1,0 +1,40 @@
+<xml>
+<title>903 Cash Flow Report</title>
+
+<select>
+    SELECT SC.CampaignId, SC.Name CampaignName, SC.CampaignType, SC.StockType, SC.CampDateStart CampDateStart, SC.CampDateStop CampDateStop,
+	SC.Category Category, SC.BuyerCountry Buyer, SC.PipeForecast SalesForecast, SC.ItemStockSellOut SellOutValue, SC.ItemValue SupplierValue,
+    SC.PipeMargin ProductPipeMargin, SC.ItemMargin ProductMargin, SC.PaymentType PaymentType, SC.PaymentUpFront UpfrontPayment, SC.PostPaymentDays DaysOfPostPayment,
+    SCF.EffSampleDate SamplePaymentDate, SCF.EffSampleValue SamplePaymentValue,
+    SCF.EffAdvPaymentDate AdvPaymentDate, SCF.EffAdvPaymentValue AdvPaymentAmount, 
+    SCF.EffPostPaymentDate PostPaymentDate, SCF.EffPostPaymentValue PostPaymentAmount
+FROM SaleCampaign SC
+LEFT JOIN SaleCampaignFinance SCF ON SCF.CampaignId = SC.CampaignId
+WHERE SC.CampDateStart BETWEEN [FROM] AND [TO]
+</select>
+
+<fields>
+	<field name="CampaignId" type="string" width="100" />
+	<field name="CampaignName" type="string" width="100" />
+        <field name="CampaignType" type="string" width="100" />
+        <field name="StockType" type="string" width="100" />
+	<field name="CampDateStart" type="string" width="100" />
+	<field name="CampDateStop" type="string" width="100" />
+	<field name="Category" type="string" width="100" />
+	<field name="Buyer" type="string" width="100" />
+	<field name="SalesForecast" type="string" width="100" />
+	<field name="SellOutValue" type="string" width="100" />
+        <field name="SupplierValue" type="string" width="100" />
+        <field name="ProductPipeMargin" type="string" width="100" />
+	<field name="ProductMargin" type="string" width="100" />
+	<field name="PaymentType" type="string" width="100" />
+	<field name="UpfrontPayment" type="string" width="100" />
+	<field name="DaysOfPostPayment" type="string" width="100" />
+	<field name="SamplePaymentDate" caption="Sample Payment Date" type="string" width="100" />
+	<field name="SamplePaymentValue" caption="Sample Payment Amount" type="string" width="100" />
+	<field name="AdvPaymentDate" caption="Advance Payment Date" type="string" width="100" />
+	<field name="AdvPaymentAmount" caption="Advance Payment Amount" type="string" width="100" />
+	<field name="PostPaymentDate" caption="Post Payment Date" type="string" width="100" />
+	<field name="PostPaymentAmount" caption="Post Payment Amount" type="string" width="100" />
+</fields>
+</xml>
