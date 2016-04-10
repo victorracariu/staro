@@ -1,0 +1,22 @@
+<xml>
+    <view title="Item History" formwidth="800" formheight="550" />
+
+    <sql>
+        SELECT H.Id, H.Field, H.CreateTime,
+            H.OldFieldValue, H.NewFieldValue, U.PersonName
+        FROM ItemValueHistory H
+            LEFT JOIN User U ON H.CreateUserId = U.Id
+        WHERE H.ParentId = :ParentId
+        ORDER BY H.Id DESC
+    </sql>
+
+    <columns>
+        <column field="Id" type="integer" width="50" hidden="true" />
+        <column field="Field" type="string" width="150" />
+        <column field="OldFieldValue" caption="Changed From" type="string" width="150" />
+        <column field="NewFieldValue" caption="Changed To" type="string" width="150" />
+        <column field="PersonName" caption="User" type="string" width="150" />
+        <column field="CreateTime" type="string" width="150" />
+    </columns>
+
+</xml>

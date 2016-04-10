@@ -1,0 +1,12 @@
+<xml>
+<model tablename="UserConfig" />
+	
+<fields>
+	<field name="Id" type="integer" mandatory="true" unique="true" />
+	<field name="GroupId" type="integer" lookupmodel="admin/user_group" lookuptable="UserGroup" lookupname="Name" />
+	<field name="Code" type="string" mandatory="true" lookupmodel="admin/config" lookuptable="Config" lookupkey="Code" />
+	<field name="Name" type="string" mandatory="true" />
+	<field name="Value" type="string" />
+</fields>
+
+</xml>

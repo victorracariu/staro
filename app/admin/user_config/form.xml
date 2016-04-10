@@ -1,0 +1,12 @@
+<xml>
+<form title="User Settings" />
+
+<controls>
+	<control field="Id" type="hidden" />
+	<control field="GroupId" type="combo" />	
+	<control field="Code" type="combo" />	
+	<control field="Name" type="text" />
+	<control field="Value" type="text" />
+</controls>
+
+</xml>

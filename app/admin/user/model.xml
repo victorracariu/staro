@@ -1,0 +1,16 @@
+<xml>
+<model tablename="User" />
+
+<fields>
+	<field name="Id" type="integer" mandatory="true" unique="true" />
+	<field name="Username" type="string" mandatory="true" unique="true" />
+	<field name="Password" type="string" mandatory="true" />
+	<field name="Passtest" type="string" mandatory="true" />
+	<field name="GroupId" type="integer" mandatory="true" lookupmodel="admin/user_group" lookuptable="UserGroup" lookupname="Name" />
+	<field name="PersonName" type="string" />
+	<field name="PersonCode" type="string" />
+	<field name="PersonTitle" type="string" />
+	<field name="Email" type="string" />
+</fields>
+
+</xml>

@@ -14,7 +14,7 @@ class RDatabase
 
     public function Connect( $params )
     {
-        include_once( RVXPATH."database/db.php" );
+        include_once( RVXPATH."database/DB.php" );
         $this->db =& DB( $params );
         return $this->db->conn_id;
     }
@@ -167,7 +167,7 @@ class RDatabase
         $this->db->delete( $tablename );
     }
 
-    
+
     public function StartTransaction( )
     {
         if ( 1 < $this->TransactionDepth )

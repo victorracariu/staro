@@ -1,6 +1,7 @@
 <?php
 
 include_once( RVXPATH.'controller.php' );
+include_once( RVXPATH.'history_model.php' );
 include_once( RVXPATH.'dialog.php' );
 include_once( APPPATH.'catalog/item_mapping.php' );
 
@@ -127,12 +128,8 @@ class Item extends RController
     }
 }
 
-class Item_Model extends RModel
+class Item_Model extends HistoryModel
 {
-    function Item_Mode()
-    {
-        parent::RModel();
-    }
 
     function CheckUnique()
     {
@@ -167,7 +164,7 @@ class Item_Model extends RModel
         else{
             $this->SetField('IsContent', 0);
         }
-
+        
         parent::OnBeforeSave($id);
     }
 }
@@ -192,6 +189,15 @@ class Item_Form extends RForm
             }
         }
         parent::Render();
+    }
+
+    function RenderControl( $ctrl ) // override
+    {
+        if( $ctrl->Name == 'WordCount' )
+		{
+			//$this->HtmlControls .= file_get_contents( APPPATH.'catalog/item/js/wordcounter.js' );
+		}
+        return $ctrl->Render();
     }
 }
 

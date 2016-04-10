@@ -1,6 +1,8 @@
 <?php
 
 include( "header.php" );
+echo '
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>';
 
 echo '
 <script type="text/javascript" src="js/menu/EditableItem.js"></script>

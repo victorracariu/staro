@@ -1,0 +1,20 @@
+<xml>
+<form title="User Group" />
+	
+<boxes>
+	<box id="1" caption="Detail" />
+	<box id="2" caption="Rights" gridmodel="admin/user_right" width="700" height="400" />
+</boxes>
+
+<controls>
+	<control box="1" field="Id" type="hidden" />	
+	<control box="1" field="Name" type="text" />
+	<control box="1" field="Description" type="memo" />
+</controls>
+
+<actions>
+	<action caption="Grant module"  url="admin/user_group/action_grant_module" />
+	<action caption="Revoke module" url="admin/user_group/action_revoke_module" />
+</actions>
+
+</xml>

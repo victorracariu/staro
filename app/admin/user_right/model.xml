@@ -1,0 +1,16 @@
+<xml>
+<model tablename="UserRight" />
+
+<fields>
+	<field name="Id" type="integer" unique="true" />
+	<field name="ParentId" type="integer" lookupmodel="admin/user_group" lookuptable="UserGroup" />
+	<field name="Module" type="string" mandatory="true" />
+	<field name="Model" type="string" mandatory="true" />
+	<field name="CanAccess" type="bool" />
+	<field name="CanInsert" type="bool" />
+	<field name="CanUpdate" type="bool" />
+	<field name="CanDelete" type="bool" />
+	<field name="CanUnpost" type="bool" />
+</fields>
+
+</xml>

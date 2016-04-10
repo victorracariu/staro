@@ -1,11 +1,4 @@
 <?php
-/*********************/
-/*                   */
-/*  Version : 5.1.0  */
-/*  Author  : RM     */
-/*  Comment : 071223 */
-/*                   */
-/*********************/
 
 class RModel
 {
@@ -175,8 +168,8 @@ class RModel
     public function SaveInsert( $id )
     {
         $rvx =& get_engine( );
-        //$f['CreateUserId'] = $rvx->Context->UserId;
-        //$f['CreateTime'] = date( "Y-m-d H:i:s" );
+        $f['CreateUserId'] = $rvx->Context->UserId;
+        $f['CreateTime'] = date( "Y-m-d H:i:s" );
         $this->SetFields( $f, TRUE );
         if ( $this->ValidateFlag )
         {
@@ -193,6 +186,7 @@ class RModel
             }
             $fields[$fld->FieldName] = $fld->NewValue;
         }
+
         $rvx->Database->Insert( $this->TableName, $fields );
         $id = $rvx->Database->LastInsertId( );
         $this->SetField( $this->TableKey, $id );
@@ -394,10 +388,10 @@ class RModel
         {
             return;
         }
-        /*$this->AddField( "CreateUserId", FLD_INTEGER );
+        $this->AddField( "CreateUserId", FLD_INTEGER );
         $this->AddField( "UpdateUserId", FLD_INTEGER );
         $this->AddField( "CreateTime", FLD_STRING );
-        $this->AddField( "UpdateTime", FLD_STRING );*/
+        $this->AddField( "UpdateTime", FLD_STRING );
     }
 
     public function RenderAudit( $id )

@@ -1,3 +1,3 @@
 <databases>
-	<database name="company" driver="mysql" host="rvxdb-1.staging.ros.fd.corp" database="company" user="rvx" pass="AbadPrGVtSqvtGR6" />
+	<database name="company" driver="mysql" host="127.8.64.2" database="staro" user="admink8zYcE3" pass="HUedPMHlZHKZ" />
 </databases>

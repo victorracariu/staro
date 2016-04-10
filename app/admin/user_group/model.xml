@@ -1,0 +1,20 @@
+<xml>
+<model tablename="UserGroup" />
+
+<fields>
+	<field name="Id" type="integer" mandatory="true" unique="true" />
+	<field name="Name" type="string" mandatory="true" />
+	<field name="Description" type="string" />
+</fields>
+
+
+<children>
+	<child table="UserRight" key="ParentId" />
+	<child table="UserConfig" key="GroupId" />
+</children>
+
+<relations>
+	<relation table="User" key="GroupId" />
+</relations>
+
+</xml>

@@ -1,0 +1,33 @@
+<xml>
+    <view title="Item History" formwidth="800" formheight="550" />
+
+    <sql>
+        SELECT X.EditTable, X.Id, X.Field, X.CreateTime,
+            X.OldFieldValue, X.NewFieldValue, X.PersonName
+        FROM (
+        SELECT 'Item' EditTable, H.Id, H.Field, H.CreateTime,
+            H.OldFieldValue, H.NewFieldValue, U.PersonName
+        FROM ItemHistory H
+            LEFT JOIN User U ON H.CreateUserId = U.Id
+        WHERE H.ParentId = :ParentId
+            UNION ALL
+        SELECT 'Attribute' EditTable, H.Id, H.Field, H.CreateTime,
+            H.OldFieldValue, H.NewFieldValue, U.PersonName
+        FROM ItemValueHistory H
+            INNER JOIN ItemValue IV ON H.ParentId = IV.Id
+            LEFT JOIN User U ON H.CreateUserId = U.Id
+        WHERE IV.ItemId = :ParentId) X
+        ORDER BY X.Id DESC
+    </sql>
+
+    <columns>
+        <column field="Id" type="integer" width="50" hidden="true" />
+        <column field="EditTable" caption="Edit Table" type="string" width="150" />
+        <column field="Field" type="string" width="150" />
+        <column field="OldFieldValue" caption="Changed From" type="string" width="150" />
+        <column field="NewFieldValue" caption="Changed To" type="string" width="150" />
+        <column field="PersonName" caption="User" type="string" width="150" />
+        <column field="CreateTime" type="string" width="150" />
+    </columns>
+
+</xml>

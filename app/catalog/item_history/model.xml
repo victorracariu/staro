@@ -1,0 +1,11 @@
+<xml>
+    <model tablename="ItemHistory" />
+
+    <fields>
+        <field name="Id" type="integer" mandatory="true" unique="true" />
+        <field name="ParentId" type="integer" mandatory="true" />
+        <field name="Field" type="string" mandatory="true" />
+        <field name="OldFieldValue" type="string" />
+        <field name="NewFieldValue" type="string" />
+    </fields>
+</xml>

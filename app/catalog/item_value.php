@@ -1,6 +1,7 @@
 <?php
 
 include_once( RVXPATH.'controller.php' );
+include_once( RVXPATH.'history_model.php' );
 
 class Item_Value extends RController
 {
@@ -16,8 +17,12 @@ class Item_Value extends RController
 		$fld = $rvx->Input->Post( 'gridfield', true );
 		$key = $rvx->Input->Post( 'gridkey', true );
 		$val = $rvx->Input->Post( 'gridvalue' );
-
-        $rvx->Database->Update( 'ItemValue', array( $fld=>$val ), 'Id', $key );
+       
+        $this->CreateModel();
+        $this->Model->Load();
+        $this->Model->Open( $key );
+        $this->Model->SetField( $fld, $val );
+        $this->Model->Save( $key );
 
         return rvx_json_success();
     }
@@ -27,16 +32,11 @@ class Item_Value extends RController
         $rvx =& get_engine();
         $x = array('total'=>1, 'results' => array('Id' => '1', 'Name' => "1"));
         echo rvx_json_encode($x);
-        //return rvx_json_success();
     }
 }
 
-class Item_Value_Model extends RModel
+class Item_Value_Model extends HistoryModel
 {
-    function Item_Value_Model()
-    {
-        parent::RModel();
-    }
 
     function CheckUnique()
     {

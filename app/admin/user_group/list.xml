@@ -1,0 +1,13 @@
+<xml>
+<view title="User Groups" formwidth="800" formheight="600" />
+<sql>
+SELECT G.Id, G.Name, G.Description FROM UserGroup G ORDER BY G.Name
+</sql>
+
+<columns>
+	<column field="Id" type="integer" width="50" hidden="true" />
+	<column field="Name" />
+	<column field="Description" width="400" />
+</columns>
+	
+</xml>

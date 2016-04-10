@@ -1,0 +1,19 @@
+<xml>
+<view title="User List" formwidth="400" formheight="600" />
+<sql>
+SELECT U.Id, U.Username, U.Email, U.PersonName, U.PersonTitle, G.Name AS GroupName
+FROM User U, UserGroup G
+WHERE U.GroupId = G.Id
+ORDER BY U.Username
+</sql>
+
+<columns>
+	<column field="Id" type="integer" width="50" hidden="true" />
+	<column field="Username" />
+	<column field="GroupName" />
+	<column field="PersonName" />
+	<column field="PersonTitle" />
+	<column field="Email" />
+</columns>
+	
+</xml>

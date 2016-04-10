@@ -1,0 +1,21 @@
+<xml>
+<view title="User Rights" formwidth="400" formheight="400" />
+<sql>
+SELECT R.Id, R.ParentId, R.Module, R.Model, R.CanAccess, R.CanInsert, R.CanUpdate, R.CanDelete, R.CanUnpost
+FROM UserRight R 
+WHERE R.ParentId=:ParentId
+ORDER BY R.Module, R.Model
+ </sql>
+
+<columns>
+	<column field="Id" type="integer" width="50" hidden="true" />
+	<column field="Module" type="string" width="120" />
+	<column field="Model" type="string"  width="120" />
+	<column field="CanAccess" type="bool" width="80" />
+	<column field="CanInsert" type="bool" width="80" />
+	<column field="CanUpdate" type="bool" width="80" />
+	<column field="CanDelete" type="bool" width="80" />
+	<column field="CanUnpost" type="bool" width="80" />
+</columns>
+	
+</xml>

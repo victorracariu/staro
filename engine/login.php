@@ -11,10 +11,7 @@ class RLogin
     public $LanguageList = NULL;
     public $LanguageArray = array
     (
-        "en" => "english",
-        "fr" => "french",
-        "ro" => "romanian",
-        "vn" => "vietnamese"
+        "en" => "english"
     );
 
     public function RLogin( )
@@ -78,6 +75,7 @@ class RLogin
         }
         $language = $langkey;
         $security = new RSecurity( );
+
         if ( $security->LoginCompany( $company, $username, $password, $language ) )
         {
             setcookie( "rvx_company", $company, time( ) + 60 * 60 * 24 * 7 );

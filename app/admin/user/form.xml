@@ -1,0 +1,22 @@
+<xml>
+<form title="User" />
+
+<boxes>
+	<box id="1" caption="User" />
+	<box id="2" caption="Person" />
+</boxes>
+
+<controls>
+	<control box="1" field="Id" type="hidden" />
+	<control box="1" field="Username" />
+	<control box="1" field="Password" type="pass" />
+	<control box="1" field="Passtest" type="pass" />
+	<control box="1" field="GroupId" type="combo" />
+
+	<control box="2" field="PersonName" />
+	<control box="2" field="PersonTitle" />
+	<control box="2" field="PersonCode" />
+	<control box="2" field="Email" />
+</controls>
+
+</xml>

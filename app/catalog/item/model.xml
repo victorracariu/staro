@@ -5,10 +5,11 @@
 	<field name="Id" type="integer"  mandatory="true" unique="true" />
 	<field name="Code" type="string" mandatory="true" unique="true" upper="true" />
 	<field name="Name" type="string" mandatory="true" />
-        <field name="EAN" type="string" mandatory="true" />
+        <field name="EAN" type="string" />
         <field name="IsContent" type="integer"/>
         <field name="IsValidated" type="integer"/>
         <field name="Description" type="string"/>
+        <field name="Notes" type="string"/>
         <field name="CategoryId" type="integer" mandatory="true" lookupmodel="catalog/item_category" lookuptable="ItemCategory" lookupname="Name" />
         <field name="SubcategoryId" type="integer" mandatory="true" lookupmodel="catalog/item_subcategory" lookuptable="ItemSubcategory" lookupname="Name" />
         <field name="BrandId" type="integer" mandatory="true" lookupmodel="catalog/item_brand" lookuptable="ItemBrand" lookupname="Name" />

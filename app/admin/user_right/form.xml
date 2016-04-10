@@ -1,0 +1,16 @@
+<xml>
+<form title="User Right" />
+
+<controls>
+	<control box="1" field="Id" type="hidden" />	
+	<control box="1" field="ParentId" type="hidden" />	
+	<control box="1" field="Module" type="text" />
+	<control box="1" field="Model" type="text" />
+	<control box="1" field="CanAccess" type="check" />
+	<control box="1" field="CanInsert" type="check" />
+	<control box="1" field="CanUpdate" type="check" />
+	<control box="1" field="CanDelete" type="check" />
+	<control box="1" field="CanUnpost" type="check" />
+</controls>
+
+</xml>

@@ -1,0 +1,18 @@
+<xml>
+<view title="User Settings" formwidth="400" formheight="500" />
+<sql>
+SELECT C.Id, C.Code, C.Name, C.Type, C.Value, G.Name GroupName
+FROM UserConfig C, UserGroup G
+WHERE C.GroupId = G.Id
+ORDER BY G.Name, C.Code
+</sql>
+
+<columns>
+	<column field="Id" type="integer" width="50" hidden="true" />
+	<column field="GroupName" />
+	<column field="Code" />
+	<column field="Name" />
+	<column field="Value" />
+</columns>
+	
+</xml>

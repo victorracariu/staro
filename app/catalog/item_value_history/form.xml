@@ -1,0 +1,16 @@
+<xml>
+    <form title="Item History" />
+
+    <boxes>
+        <box id="1" caption="Detail" width="700" />
+    </boxes>
+
+    <controls>
+        <control box="1" field="Id" type="hidden" />
+        <control box="1" field="ParentId" type="hidden" />
+        <control box="1" field="Field" type="text" readonly="true" />
+        <control box="1" field="OldFieldValue" caption="Changed From" type="memo" height="150" width="550" readonly="true" />
+        <control box="1" field="NewFieldValue" caption="Changed To" type="memo" height="150" width="550" readonly="true" />
+    </controls>
+
+</xml>

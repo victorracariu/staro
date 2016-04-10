@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/1"/>
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Applications/MAMP/htdocs/rvx/contento/engine/model.php</file>
-            <file>file:/Applications/MAMP/htdocs/rvx/contento/app/catalog/menu.xml</file>
-            <file>file:/Applications/MAMP/htdocs/rvx/contento/app/catalog/item/list.xml</file>
-            <file>file:/Applications/MAMP/htdocs/rvx/contento/engine/controller.php</file>
-            <file>file:/Applications/MAMP/htdocs/rvx/contento/app/catalog/item.php</file>
-            <file>file:/Applications/MAMP/htdocs/rvx/contento/app/catalog/item_value/list.xml</file>
-            <file>file:/Applications/MAMP/htdocs/rvx/contento/app/catalog/item_category_import_excel.php</file>
-            <file>file:/Applications/MAMP/htdocs/rvx/contento/app/catalog/item_mapping.php</file>
-            <file>file:/Applications/MAMP/htdocs/rvx/contento/app/catalog/item_import_excel.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/model.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/grid_page.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/gridex_handlers.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item_value_history/form.xml</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/gridex_page.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/history_model.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item_history/form.xml</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/gridex.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item_history/model.xml</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/form_page.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item/model.xml</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/form_box.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item_value_history/model.xml</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item_value_history.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/form_control.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item/form.xml</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item_value_history/list.xml</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/grid.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item_value.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/engine/grid_pagejs.php</file>
+            <file>file:/Applications/MAMP/htdocs/staro_remote/app/catalog/item_history/list.xml</file>
         </group>
     </open-files>
 </project-private>
